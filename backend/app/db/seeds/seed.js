@@ -57,30 +57,44 @@ const seed = async () => {
     await db.query(insertEventTypesStr);
 
     const insertEventsStr = format(
-      `INSERT INTO events 
-        (title, description, date, capacity, location_name, location_address, event_type_id, creator_id, status) 
-       VALUES %L`,
+      `INSERT INTO events (
+        title, 
+        description, 
+        date, 
+        end_date,
+        capacity, 
+        location_name, 
+        location_address, 
+        event_type_id, 
+        creator_id, 
+        status,
+        timezone
+      ) VALUES %L`,
       testData.events.map(
         ({
           title,
           description,
           date,
+          end_date,
           capacity,
           location_name,
           location_address,
           event_type_id,
           creator_id,
           status,
+          timezone,
         }) => [
           title,
           description,
           date,
+          end_date || new Date(new Date(date).getTime() + 2 * 60 * 60 * 1000),
           capacity,
           location_name,
           location_address,
           event_type_id,
           creator_id,
-          status,
+          status || "upcoming",
+          timezone || "Europe/London",
         ]
       )
     );
