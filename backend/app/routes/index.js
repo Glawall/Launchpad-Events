@@ -36,6 +36,12 @@ router.post(
   checkUser,
   usersController.addAttendee
 );
+router.get("/api/events", usersController.getAllEvents);
+router.delete(
+  "/api/events/:eventId/users/:userId/attendees",
+  checkUser,
+  usersController.deleteAttendee
+);
 
 // Error handling
 router.use(errorHandler);

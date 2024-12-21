@@ -60,3 +60,79 @@ export const checkUserAccess = (
     isOwnProfile: userId === requestedUserId,
   };
 };
+
+export const checkPaginationParams = (page, limit) => {
+  const parsedPage = page ? parseInt(page) : 1;
+  const parsedLimit = limit ? parseInt(limit) : 10;
+
+  if (isNaN(parsedPage)) {
+    throw createValidationError("Invalid page number");
+  }
+
+  if (parsedPage < 1) {
+    throw createValidationError("Page number must be positive");
+  }
+
+  if (isNaN(parsedLimit)) {
+    throw createValidationError("Invalid limit number");
+  }
+
+  if (parsedLimit < 1 || parsedLimit > 100) {
+    throw createValidationError("Limit must be between 1 and 100");
+  }
+
+  return {
+    page: parsedPage,
+    limit: parsedLimit,
+  };
+};
+
+export const checkSortParams = (sort, order) => {
+  const validSortFields = ["date", "title", "capacity", "created_at"];
+  const validOrders = ["asc", "desc"];
+
+  const sortField = sort || "date";
+  const sortOrder = (order || "asc").toLowerCase();
+
+  if (!validSortFields.includes(sortField)) {
+    throw createValidationError("Invalid sort field");
+  }
+
+  if (!validOrders.includes(sortOrder)) {
+    throw createValidationError("Invalid sort order");
+  }
+
+  return {
+    sort: sortField,
+    order: sortOrder,
+  };
+};
+
+export const checkEventAttendanceIds = (eventId, userId) => {
+  if (!eventId || isNaN(eventId)) {
+    throw createValidationError("Invalid event ID");
+  }
+  if (!userId || isNaN(userId)) {
+    throw createValidationError("Invalid user ID");
+  }
+
+  return {
+    eventId: parseInt(eventId),
+    userId: parseInt(userId),
+  };
+};
+
+export const checkEventCapacity = (event, attendees, userId) => {
+  const isAttending = attendees.some(
+    (attendee) => attendee.user_id === userId || attendee.id === userId
+  );
+  if (isAttending) {
+    throw createValidationError("User is already attending this event");
+  }
+
+  if (attendees.length >= event.capacity) {
+    throw createValidationError("Event is at full capacity");
+  }
+
+  return true;
+};
