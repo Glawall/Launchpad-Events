@@ -1,4 +1,4 @@
-import * as adminRepository from "../../repositories/admin/users/index";
+import * as adminRepository from "../../repositories/users/index";
 
 export const getUserById = async (userId) => {
   if (isNaN(userId)) {

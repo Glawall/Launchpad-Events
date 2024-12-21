@@ -1,10 +1,10 @@
-import * as userService from "../../services/users/addAttendee";
+import * as userService from "../../services/users/deleteAttendee";
 import {
   checkEventAttendanceIds,
   checkUserAccess,
 } from "../../middleware/checkValidation";
 
-export const addAttendee = async (req, res, next) => {
+export const deleteAttendee = async (req, res, next) => {
   try {
     const { eventId, userId } = checkEventAttendanceIds(
       req.params.eventId,
@@ -16,8 +16,8 @@ export const addAttendee = async (req, res, next) => {
 
     checkUserAccess(userRole, requestingUserId, userId, "attend");
 
-    const attendance = await userService.addAttendee(eventId, userId);
-    res.status(201).json(attendance);
+    await userService.deleteAttendee(eventId, userId);
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
