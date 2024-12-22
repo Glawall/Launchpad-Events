@@ -1,9 +1,13 @@
 import app from "./app";
 
-const { PORT = 8003 } = process.env;
+const { PORT = 8004 } = process.env;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    app.listen(PORT, () => console.log(`Listening on ${PORT}...`));
+  } catch (error) {
+    process.exit(1);
+  }
+};
 
-module.exports = app;
+startServer();
