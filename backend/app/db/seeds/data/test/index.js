@@ -3,7 +3,7 @@ import events from "./events.js";
 import attendees from "./attendees.js";
 import eventTypes from "./event_types.js";
 
-export { users, events, attendees, eventTypes };
+export const testData = { users, events, attendees, eventTypes };
 
 export default {
   users,

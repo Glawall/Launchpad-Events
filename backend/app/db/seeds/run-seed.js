@@ -3,7 +3,7 @@ import { testData } from "./data/test/index.js";
 import { devData } from "./data/development/index.js";
 import seed from "./seed";
 
-const ENV = process.env.NODE_ENV || "development";
+const ENV = process.env.NODE_ENV || "production";
 
 console.log("Database URL:", process.env.DATABASE_URL);
 

@@ -7,7 +7,7 @@ import request from "supertest";
 describe("GET /api/users/:id", () => {
   beforeEach(async () => {
     await db.query("BEGIN");
-    await seed(db, testData);
+    await seed(testData);
   });
 
   afterEach(async () => {

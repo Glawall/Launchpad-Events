@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 import dotenv from "dotenv";
 
-const ENV = process.env.NODE_ENV || "production";
+const ENV = process.env.NODE_ENV || "test";
 console.log(ENV, "in connection");
 
 dotenv.config({

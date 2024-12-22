@@ -2,7 +2,6 @@ import format from "pg-format";
 import { readFileSync } from "fs";
 import path from "path";
 import db from "../../connection";
-import testData from "./data/test/index";
 import bcrypt from "bcryptjs";
 
 const schemaFiles = [
@@ -33,7 +32,6 @@ const createTables = async () => {
 const seed = async ({ eventTypes, events, users, attendees }) => {
   try {
     await createTables();
-    console.log(users.password);
     const insertUsersStr = format(
       "INSERT INTO users (email, name, password_hash, role) VALUES %L;",
       await Promise.all(
