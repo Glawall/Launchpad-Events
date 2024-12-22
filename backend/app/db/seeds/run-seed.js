@@ -1,23 +1,15 @@
 import db from "../../connection.js";
-import { users, events, attendees, eventTypes } from "./data/test";
+import { testData } from "./data/test/index.js";
+import { devData } from "./data/development/index.js";
 import seed from "./seed";
 
-const runSeed = async () => {
-  try {
-    const { eventTypesRows, userRows, eventRows, attendeeRows } = await seed(
-      db,
-      {
-        eventTypeData: eventTypes,
-        userData: users,
-        eventData: events,
-        attendeeData: attendees,
-      }
-    );
+const ENV = process.env.NODE_ENV || "production";
 
-    console.log(`Inserted ${eventTypesRows.length} event_types`);
-    console.log(`Inserted ${userRows.length} users`);
-    console.log(`Inserted ${eventRows.length} events`);
-    console.log(`Inserted ${attendeeRows.length} attendees`);
+console.log("Database URL:", process.env.DATABASE_URL);
+
+const runSeed = async (data) => {
+  try {
+    await seed(data);
   } catch (err) {
     console.error(err);
     throw err;
@@ -26,16 +18,11 @@ const runSeed = async () => {
   }
 };
 
-if (require.main === module) {
-  runSeed()
-    .then(() => {
-      console.log("Database seeded successfully");
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error("Error seeding database:", error);
-      process.exit(1);
-    });
-}
+const dataToSeed = ENV === "test" ? testData : devData;
 
+if (dataToSeed) {
+  runSeed(dataToSeed);
+} else {
+  console.warn("No seed data available for the current environment.");
+}
 module.exports = runSeed;
