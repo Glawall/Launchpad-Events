@@ -5,7 +5,7 @@ var _index = require("./data/test/index.js");
 var _index2 = require("./data/development/index.js");
 var _seed = _interopRequireDefault(require("./seed"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-const ENV = process.env.NODE_ENV || "development";
+const ENV = process.env.NODE_ENV || "production";
 console.log("Database URL:", process.env.DATABASE_URL);
 const runSeed = async data => {
   try {

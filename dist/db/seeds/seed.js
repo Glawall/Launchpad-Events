@@ -8,7 +8,6 @@ var _pgFormat = _interopRequireDefault(require("pg-format"));
 var _fs = require("fs");
 var _path = _interopRequireDefault(require("path"));
 var _connection = _interopRequireDefault(require("../../connection"));
-var _index = _interopRequireDefault(require("./data/test/index"));
 var _bcryptjs = _interopRequireDefault(require("bcryptjs"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 const schemaFiles = ["users.sql", "event_types.sql", "events.sql", "event_attendees.sql"];
@@ -37,7 +36,6 @@ const seed = async ({
 }) => {
   try {
     await createTables();
-    console.log(users.password);
     const insertUsersStr = (0, _pgFormat.default)("INSERT INTO users (email, name, password_hash, role) VALUES %L;", await Promise.all(users.map(async ({
       email,
       name,
