@@ -14,7 +14,7 @@ const runSeed = async () => {
       }
     );
 
-    console.log(`Inserted ${eventTypesRows.length} event types`);
+    console.log(`Inserted ${eventTypesRows.length} event_types`);
     console.log(`Inserted ${userRows.length} users`);
     console.log(`Inserted ${eventRows.length} events`);
     console.log(`Inserted ${attendeeRows.length} attendees`);
