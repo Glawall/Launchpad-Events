@@ -20,7 +20,6 @@ const createTables = async () => {
       DROP TABLE IF EXISTS event_types CASCADE;
       DROP TABLE IF EXISTS users CASCADE;
     `);
-
     for (const file of schemaFiles) {
       const filePath = path.join(`${__dirname}/../../db/schema`, file);
       const sql = readFileSync(filePath, "utf-8");
@@ -31,14 +30,14 @@ const createTables = async () => {
   }
 };
 
-const seed = async () => {
+const seed = async ({ eventTypes, events, users, attendees }) => {
   try {
     await createTables();
-
+    console.log(users.password);
     const insertUsersStr = format(
       "INSERT INTO users (email, name, password_hash, role) VALUES %L;",
       await Promise.all(
-        testData.users.map(async ({ email, name, password, role }) => [
+        users.map(async ({ email, name, password, role }) => [
           email,
           name,
           await bcrypt.hash(password, 10),
@@ -51,7 +50,7 @@ const seed = async () => {
 
     const insertEventTypesStr = format(
       "INSERT INTO event_types (name, description) VALUES %L",
-      testData.eventTypes.map(({ name, description }) => [name, description])
+      eventTypes.map(({ name, description }) => [name, description])
     );
 
     await db.query(insertEventTypesStr);
@@ -70,7 +69,7 @@ const seed = async () => {
         status,
         timezone
       ) VALUES %L`,
-      testData.events.map(
+      events.map(
         ({
           title,
           description,
@@ -103,7 +102,7 @@ const seed = async () => {
 
     const insertAttendeesStr = format(
       "INSERT INTO event_attendees (event_id, user_id, added_to_calendar) VALUES %L",
-      testData.attendees.map(({ event_id, user_id, added_to_calendar }) => [
+      attendees.map(({ event_id, user_id, added_to_calendar }) => [
         event_id,
         user_id,
         added_to_calendar,
