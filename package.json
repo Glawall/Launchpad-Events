@@ -8,7 +8,7 @@
     "test:watch": "NODE_ENV=test jest --watch",
     "test:coverage": "NODE_ENV=test jest --coverage",
     "dev": "NODE_ENV=development nodemon --exec babel-node app/server.js",
-    "start": "babel-node backend/app/server.js",
+    "start": "node backend/app/server.js",
     "setup-dbs": "psql -f backend/app/db/setup.sql",
     "seed": "babel-node backend/app/db/seeds/run-seed.js",
     "seed-test": "NODE_ENV=test npm run seed",
