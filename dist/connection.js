@@ -7,7 +7,7 @@ exports.default = void 0;
 var _pg = require("pg");
 var _dotenv = _interopRequireDefault(require("dotenv"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-const ENV = process.env.NODE_ENV || "production";
+const ENV = process.env.NODE_ENV || "test";
 console.log(ENV, "in connection");
 _dotenv.default.config({
   path: `${__dirname}/../.env.${ENV}`
