@@ -1,5 +1,9 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
+if (!process.env.ADMIN_PASSWORD || !process.env.USER_PASSWORD) {
+  throw new Error("Missing required password environment variables");
+}
 module.exports = [
   {
     name: "Sarah Johnson",
