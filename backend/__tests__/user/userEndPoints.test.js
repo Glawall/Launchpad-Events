@@ -111,6 +111,35 @@ describe("GET /api/users/:id", () => {
     expect(response.body).not.toHaveProperty("password_hash");
   });
 
+  describe("GET /api/users", () => {
+    test("200 - GET: Responds with all users", async () => {
+      const response = await request(app).get("/api/users");
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(5);
+
+      expect(response.body[0]).toMatchObject({
+        id: expect.any(Number),
+        email: expect.any(String),
+        name: expect.any(String),
+        role: expect.any(String),
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+      });
+    });
+
+    test("200 - GET: Responds with all users ordered by created_at DESC", async () => {
+      const response = await request(app).get("/api/users");
+
+      expect(response.status).toBe(200);
+      const dates = response.body.map((user) =>
+        new Date(user.created_at).getTime()
+      );
+      const sortedDates = [...dates].sort((a, b) => b - a);
+      expect(dates).toEqual(sortedDates);
+    });
+  });
+
   describe("DELETE /api/users/:id", () => {
     test("204 - DELETE: successfully deletes own profile", async () => {
       const response = await request(app)

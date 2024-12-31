@@ -1,5 +1,5 @@
-import db from "../../../connection.js";
-import { handleDatabaseError } from "../../../middleware/errorHandler.js";
+import db from "../../connection.js";
+import { handleDatabaseError } from "../../middleware/errorHandler.js";
 
 export const getAllUsers = async () => {
   try {
