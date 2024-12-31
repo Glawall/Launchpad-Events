@@ -178,7 +178,7 @@ describe("GET /api/events/:id", () => {
       );
     });
   });
-  describe.only("GET /api/events", () => {
+  describe("GET /api/events", () => {
     test("200 - GET: returns paginated events with default options", async () => {
       const response = await request(app).get("/api/events");
 

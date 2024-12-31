@@ -9,7 +9,6 @@ import { checkAdmin, checkUser } from "../middleware/auth.js";
 const router = express.Router();
 
 // Admin Routes
-router.get("/api/admin/users", checkAdmin, adminUserController.getAllUsers);
 router.post("/api/admin/events", checkAdmin, adminEventController.createEvent);
 router.put(
   "/api/admin/events/:id",
@@ -42,6 +41,7 @@ router.delete(
   checkUser,
   usersController.deleteAttendee
 );
+router.get("/api/users", usersController.getAllUsers);
 
 // Error handling
 router.use(errorHandler);
