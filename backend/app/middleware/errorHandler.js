@@ -11,6 +11,12 @@ export const createAuthenticationError = (message) => {
   return error;
 };
 
+export const createAuthorizationError = (message) => {
+  const error = new Error(message);
+  error.name = "AuthorizationError";
+  return error;
+};
+
 export const createValidationError = (message) => {
   const error = new Error(message);
   error.name = "ValidationError";
@@ -37,7 +43,7 @@ export const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
 
   if (err.name === "AuthenticationError") {
-    return res.status(403).json({ message: err.message });
+    return res.status(401).json({ message: err.message });
   }
 
   if (err.name === "ValidationError") {
@@ -46,6 +52,10 @@ export const errorHandler = (err, req, res, next) => {
 
   if (err.name === "DatabaseError") {
     return res.status(500).json({ message: err.message });
+  }
+
+  if (err.name === "AuthorizationError") {
+    return res.status(403).json({ message: err.message });
   }
 
   if (err.message === "Event not found") {

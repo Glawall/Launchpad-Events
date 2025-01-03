@@ -1,4 +1,3 @@
-import { createAuthenticationError } from "./errorHandler.js";
 import { checkUserAccess } from "./checkValidation";
 
 export const checkAuth = (req, res, next) => {

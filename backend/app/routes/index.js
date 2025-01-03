@@ -2,11 +2,15 @@ import express from "express";
 import * as adminEventController from "../controllers/admin/events/index";
 import * as usersController from "../controllers/users/index";
 import * as adminUserController from "../controllers/admin/users/index";
+import * as authController from "../controllers/auth/index.js";
 
 import { errorHandler } from "../middleware/errorHandler.js";
 import { checkAdmin, checkUser } from "../middleware/auth.js";
 
 const router = express.Router();
+
+// Auth route
+router.post("/api/auth/login", authController.login);
 
 // Admin Routes
 router.post("/api/admin/events", checkAdmin, adminEventController.createEvent);
