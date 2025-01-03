@@ -3,10 +3,10 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "updateUser", {
+Object.defineProperty(exports, "findUserByEmail", {
   enumerable: true,
   get: function () {
-    return _updateUser.updateUser;
+    return _login.findUserByEmail;
   }
 });
-var _updateUser = require("./updateUser");
+var _login = require("./login");

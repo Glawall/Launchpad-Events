@@ -1,26 +1,26 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { useAuth as useAuthApi } from "../hooks/api-hooks";
+import React, { createContext, useContext, useState } from "react";
+import { useAuth as useAuthHook } from "../hooks/api-hooks";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const { validateCredentials } = useAuthApi();
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const { validateCredentials } = useAuthHook();
 
-  useEffect(() => {
-    localStorage.removeItem("user");
-    sessionStorage.clear();
-    setUser(null);
-  }, []);
-
-  const login = async (credentials) => {
+  const login = async (email, password) => {
     try {
-      const userData = await validateCredentials(credentials);
-      const { password, ...userWithoutPassword } = userData;
-      setUser(userWithoutPassword);
-      localStorage.setItem("user", JSON.stringify(userWithoutPassword));
-      return userWithoutPassword;
+      const userData = await validateCredentials({ email, password });
+
+      // Store full user object
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      return userData;
     } catch (error) {
+      console.error("Login error:", error);
       throw error;
     }
   };
@@ -28,16 +28,19 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    sessionStorage.clear();
   };
 
-  return (
-    <AuthContext.Provider
-      value={{ user, login, logout, isAdmin: user?.role === "admin" }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const isAdmin = user?.role === "admin";
+
+  const value = {
+    user,
+    login,
+    logout,
+    isAdmin,
+    isLoggedIn: !!user,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

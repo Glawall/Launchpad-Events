@@ -21,6 +21,12 @@ Object.defineProperty(exports, "getAllEvents", {
     return _getAllEvents.getAllEvents;
   }
 });
+Object.defineProperty(exports, "getAllUsers", {
+  enumerable: true,
+  get: function () {
+    return _getAllUsers.getAllUsers;
+  }
+});
 Object.defineProperty(exports, "getEventById", {
   enumerable: true,
   get: function () {
@@ -38,3 +44,4 @@ var _getUserById = require("./getUserById");
 var _deleteUser = require("./deleteUser");
 var _addAttendee = require("./addAttendee");
 var _getAllEvents = require("./getAllEvents");
+var _getAllUsers = require("./getAllUsers");

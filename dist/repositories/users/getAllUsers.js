@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.getAllUsers = void 0;
-var _connection = _interopRequireDefault(require("../../../connection.js"));
-var _errorHandler = require("../../../middleware/errorHandler.js");
+var _connection = _interopRequireDefault(require("../../connection.js"));
+var _errorHandler = require("../../middleware/errorHandler.js");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 const getAllUsers = async () => {
   try {

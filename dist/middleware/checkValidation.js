@@ -34,7 +34,7 @@ const checkUserAccess = (userRole, userId, requestedUserId, action = "access") =
       delete: "You can only delete your own profile",
       update: "You can only update your own profile"
     };
-    throw (0, _errorHandler.createAuthenticationError)(messages[action] || messages.access);
+    throw (0, _errorHandler.createAuthorizationError)(messages[action] || messages.access);
   }
   return {
     isAdmin: userRole === "admin",

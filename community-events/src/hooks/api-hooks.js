@@ -1,38 +1,18 @@
 import { useCallback } from "react";
 import api from "../utils/api-client";
 
-const MOCK_USERS = [
-  {
-    id: 1,
-    email: "sarah.johnson@techevents.com",
-    password: "password123",
-    name: "Sarah Johnson",
-    role: "admin",
-  },
-  {
-    id: 3,
-    email: "emma.w@gmail.com",
-    password: "password123",
-    name: "Emma W",
-    role: "user",
-  },
-];
-
 export function useAuth() {
   const validateCredentials = useCallback(async (credentials) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    const matchedUser = MOCK_USERS.find(
-      (u) =>
-        u.email === credentials.email && u.password === credentials.password
-    );
-
-    if (!matchedUser) {
-      throw new Error("Invalid email or password");
+    try {
+      const response = await api.post("/api/auth/login", {
+        email: credentials.email,
+        password: credentials.password,
+      });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || "Login failed";
+      throw new Error(message);
     }
-
-    const { password, ...userWithoutPassword } = matchedUser;
-    return userWithoutPassword;
   }, []);
 
   return { validateCredentials };
@@ -164,12 +144,3 @@ export function useUser() {
 
   return { getUserById, deleteUser };
 }
-
-api.interceptors.request.use((config) => {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  if (user?.role) {
-    config.headers["user-role"] = user.role;
-    config.headers["user-id"] = user.id;
-  }
-  return config;
-});

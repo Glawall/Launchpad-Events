@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.handleDatabaseError = exports.errorHandler = exports.createValidationError = exports.createDatabaseError = exports.createAuthenticationError = void 0;
+exports.handleDatabaseError = exports.errorHandler = exports.createValidationError = exports.createDatabaseError = exports.createAuthorizationError = exports.createAuthenticationError = void 0;
 const createDatabaseError = (message, code) => {
   const error = new Error(message);
   error.name = "DatabaseError";
@@ -17,6 +17,12 @@ const createAuthenticationError = message => {
   return error;
 };
 exports.createAuthenticationError = createAuthenticationError;
+const createAuthorizationError = message => {
+  const error = new Error(message);
+  error.name = "AuthorizationError";
+  return error;
+};
+exports.createAuthorizationError = createAuthorizationError;
 const createValidationError = message => {
   const error = new Error(message);
   error.name = "ValidationError";
@@ -40,7 +46,7 @@ exports.handleDatabaseError = handleDatabaseError;
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
   if (err.name === "AuthenticationError") {
-    return res.status(403).json({
+    return res.status(401).json({
       message: err.message
     });
   }
@@ -51,6 +57,11 @@ const errorHandler = (err, req, res, next) => {
   }
   if (err.name === "DatabaseError") {
     return res.status(500).json({
+      message: err.message
+    });
+  }
+  if (err.name === "AuthorizationError") {
+    return res.status(403).json({
       message: err.message
     });
   }

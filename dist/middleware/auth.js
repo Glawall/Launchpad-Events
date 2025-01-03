@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.checkUser = exports.checkAuth = exports.checkAdmin = void 0;
-var _errorHandler = require("./errorHandler.js");
 var _checkValidation = require("./checkValidation");
 const checkAuth = (req, res, next) => {
   const userRole = req.get("user-role");

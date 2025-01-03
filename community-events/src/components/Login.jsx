@@ -1,75 +1,64 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
     try {
-      await login({ email, password });
-      navigate("/events", { replace: true });
+      const user = await login(email, password);
+      console.log("Logged in successfully as:", user.role);
+      navigate("/events");
     } catch (err) {
-      console.error("Login error:", err);
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Unable to connect to server. Please check your connection and try again."
-      );
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
   return (
     <div className="wrapper">
       <div className="form">
-        <h2 className="title">Sign in</h2>
+        <h2 className="title">Sign in to your account</h2>
         <form onSubmit={handleSubmit} className="login-form">
-          {error && (
-            <div className="error-box">
-              <div className="error-text">{error}</div>
-            </div>
-          )}
           <div className="input-group">
-            <label htmlFor="email" className="hidden">
-              Email address
-            </label>
+            <label htmlFor="email">Email</label>
             <input
               id="email"
-              name="email"
               type="email"
-              required
-              className="input"
-              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              id="password"
-              name="password"
-              type="password"
               required
               className="input"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="btn-blue full" disabled={loading}>
-            {loading ? "Signing in..." : "Sign in"}
+          <div className="input-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="input"
+            />
+          </div>
+          {error && (
+            <div className="error-box">
+              <p className="error-text">{error}</p>
+            </div>
+          )}
+          <button type="submit" className="btn-primary">
+            Sign in
           </button>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default Login;
