@@ -1,6 +1,7 @@
 import {
   createAuthenticationError,
   createValidationError,
+  createAuthorizationError,
 } from "./errorHandler.js";
 
 export const checkEvent = (eventData) => {
@@ -51,7 +52,7 @@ export const checkUserAccess = (
       delete: "You can only delete your own profile",
       update: "You can only update your own profile",
     };
-    throw createAuthenticationError(messages[action] || messages.access);
+    throw createAuthorizationError(messages[action] || messages.access);
   }
 
   return {

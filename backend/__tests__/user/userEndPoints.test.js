@@ -22,7 +22,6 @@ describe("GET /api/users/:id", () => {
       .get("/api/users/2")
       .set("user-role", "admin")
       .set("user-id", "1");
-
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject({
       id: 2,
