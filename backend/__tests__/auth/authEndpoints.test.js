@@ -28,10 +28,8 @@ describe("POST /api/auth/login", () => {
 
       expect(response.status).toBe(200);
 
-      // Verify we got a token
       expect(response.body).toBeDefined();
 
-      // Verify token is valid JWT
       const decodedToken = jwt.verify(response.body, "SECRET_KEY");
       expect(decodedToken).toMatchObject({
         email: "admin@example.com",
