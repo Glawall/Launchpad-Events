@@ -1,20 +1,21 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { signup } from "../hooks/api-hooks";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Signup = () => {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting:", { email, name, password });
+
     try {
-      const user = await login(email, password);
-      console.log("Logged in successfully as:", user.role);
-      navigate("/events");
+      await signup(email, name, password);
+      navigate("/login");
     } catch (err) {
       setError(err.message);
     }
@@ -23,7 +24,7 @@ const Login = () => {
   return (
     <div className="wrapper">
       <div className="form">
-        <h2 className="title">Sign in to your account</h2>
+        <h2 className="title">Create an account</h2>
         <form onSubmit={handleSubmit} className="login-form">
           <div className="input-group">
             <label htmlFor="email">Email</label>
@@ -32,6 +33,17 @@ const Login = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="name">Full Name</label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
               className="input"
             />
@@ -53,14 +65,7 @@ const Login = () => {
             </div>
           )}
           <button type="submit" className="btn-primary">
-            Sign in
-          </button>
-          <button
-            type="button"
-            className="btn-secondary mt-4"
-            onClick={() => navigate("/signup")}
-          >
-            Create an account
+            Sign up
           </button>
         </form>
       </div>
@@ -68,4 +73,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

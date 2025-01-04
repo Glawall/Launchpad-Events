@@ -5,6 +5,7 @@ import EventList from "./components/EventList";
 import CreateEvent from "./components/CreateEvent";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Login from "./components/Login";
+import Signup from "./components/Signup";
 
 function App() {
   const { user } = useAuth();
@@ -27,6 +28,10 @@ function App() {
           <Route
             path="/login"
             element={user ? <Navigate to="/events" replace /> : <Login />}
+          />
+          <Route
+            path="/signup"
+            element={user ? <Navigate to="/events" replace /> : <Signup />}
           />
           <Route
             path="/events"
