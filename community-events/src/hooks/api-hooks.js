@@ -21,7 +21,6 @@ export function useAuth() {
 export function useEvents() {
   const getAllEvents = useCallback(
     async ({ page = 1, limit = 10, sort = "date", order = "asc" }) => {
-      console.log("API call params:", { page, limit, sort, order }); // Debug log
       const response = await api.get("/api/events", {
         params: {
           page: parseInt(page),
@@ -30,7 +29,6 @@ export function useEvents() {
           order,
         },
       });
-      console.log("API response:", response.data);
       return response.data;
     },
     []
@@ -66,7 +64,6 @@ export function useEvents() {
       });
       return response.data;
     } catch (error) {
-      console.error("API Error:", error.response?.data); // Debug log
       throw error;
     }
   }, []);

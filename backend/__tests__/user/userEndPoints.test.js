@@ -192,4 +192,119 @@ describe("GET /api/users/:id", () => {
       expect(response.body.message).toBe("User not found");
     });
   });
+  describe("POST /api/users", () => {
+    test("201: creates a new user successfully", async () => {
+      const newUser = {
+        email: "test@example.com",
+        name: "Test User",
+        password: "test123!",
+      };
+
+      const response = await request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201);
+
+      expect(response.body.user).toMatchObject({
+        id: expect.any(Number),
+        email: newUser.email,
+        name: newUser.name,
+        role: "user",
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+      });
+
+      const { rows } = await db.query("SELECT * FROM users WHERE email = $1", [
+        newUser.email,
+      ]);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toMatchObject({
+        email: newUser.email,
+        name: newUser.name,
+        role: "user",
+      });
+      expect(rows[0].password_hash).toBeDefined();
+      expect(rows[0].password_hash).not.toBe(newUser.password);
+    });
+
+    test("400: returns error when email is missing", async () => {
+      const invalidUser = {
+        name: "Test User",
+        password: "test123!",
+      };
+
+      const response = await request(app)
+        .post("/api/users")
+        .send(invalidUser)
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        "Email, name, and password are required"
+      );
+    });
+
+    test("400: returns error when name is missing", async () => {
+      const invalidUser = {
+        email: "test@example.com",
+        password: "test123!",
+      };
+
+      const response = await request(app)
+        .post("/api/users")
+        .send(invalidUser)
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        "Email, name, and password are required"
+      );
+    });
+
+    test("400: returns error when password is missing", async () => {
+      const invalidUser = {
+        email: "test@example.com",
+        name: "Test User",
+      };
+
+      const response = await request(app)
+        .post("/api/users")
+        .send(invalidUser)
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        "Email, name, and password are required"
+      );
+    });
+
+    test("500: returns error when user already exists", async () => {
+      const existingUser = {
+        email: "test@example.com",
+        name: "Test User",
+        password: "test123!",
+      };
+
+      await request(app).post("/api/users").send(existingUser);
+
+      const response = await request(app)
+        .post("/api/users")
+        .send(existingUser)
+        .expect(500);
+
+      expect(response.body.message).toBe("Duplicate entry found");
+    });
+
+    test("400: returns error for invalid email format", async () => {
+      const invalidUser = {
+        email: "not-an-email",
+        name: "Test User",
+        password: "test123!",
+      };
+
+      const response = await request(app)
+        .post("/api/users")
+        .send(invalidUser)
+        .expect(400);
+
+      expect(response.body.message).toBe("Invalid email format");
+    });
+  });
 });

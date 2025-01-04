@@ -9,6 +9,12 @@ Object.defineProperty(exports, "addAttendee", {
     return _addAttendee.addAttendee;
   }
 });
+Object.defineProperty(exports, "createUser", {
+  enumerable: true,
+  get: function () {
+    return _createUser.createUser;
+  }
+});
 Object.defineProperty(exports, "deleteAttendee", {
   enumerable: true,
   get: function () {
@@ -52,3 +58,4 @@ var _addAttendee = require("./addAttendee");
 var _getAllEvents = require("./getAllEvents");
 var _deleteAttendee = require("./deleteAttendee");
 var _getAllUsers = require("./getAllUsers");
+var _createUser = require("./createUser");

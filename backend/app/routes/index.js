@@ -46,6 +46,7 @@ router.delete(
   usersController.deleteAttendee
 );
 router.get("/api/users", usersController.getAllUsers);
+router.post("/api/users", usersController.createUser);
 
 // Error handling
 router.use(errorHandler);
