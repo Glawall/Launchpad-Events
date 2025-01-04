@@ -5,3 +5,4 @@ export { addAttendee } from "./addAttendee";
 export { getAllEvents } from "./getAllEvents";
 export { deleteAttendee } from "./deleteAttendee";
 export { getAllUsers } from "./getAllUsers";
+export { createUser } from "./createUser";
