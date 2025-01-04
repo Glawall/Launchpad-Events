@@ -26,7 +26,6 @@
     "@babel/preset-env": "^7.26.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-module-resolver": "^5.0.2",
-    "bcrypt": "^5.1.1",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "save": "^2.9.0"
@@ -39,6 +38,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
     "pg-format": "^1.0.4",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "bcrypt": "^5.1.1"
   }
 }
