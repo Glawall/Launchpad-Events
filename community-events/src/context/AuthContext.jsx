@@ -13,8 +13,6 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const userData = await validateCredentials({ email, password });
-
-      // Store full user object
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
 
