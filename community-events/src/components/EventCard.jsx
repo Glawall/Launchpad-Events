@@ -29,7 +29,7 @@ export default function EventCard({ event }) {
 
   const createGoogleCalendarLink = () => {
     const startDate = new Date(event.date);
-    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+    const endDate = new Date(event.end_date);
 
     const params = {
       action: "TEMPLATE",
@@ -53,8 +53,8 @@ export default function EventCard({ event }) {
       <p className="card-text">{event.description}</p>
       <div className="card-info">
         <p>Location: {event.location_name}</p>
-        <p>Date: {new Date(event.date).toLocaleDateString()}</p>
-        <p>Time: {new Date(event.date).toLocaleTimeString()}</p>
+        <p>Start: {new Date(event.date).toLocaleString()}</p>
+        <p>End: {new Date(event.end_date).toLocaleString()}</p>
         <p>Spots: {event.capacity}</p>
       </div>
       <div className="card-actions">

@@ -18,6 +18,22 @@ export function useAuth() {
   return { validateCredentials };
 }
 
+export async function signup(email, name, password) {
+  console.log(email, name, password);
+  try {
+    const response = await api.post("/api/users", {
+      email,
+      name,
+      password,
+      role: "user",
+    });
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || "Signup failed";
+    throw new Error(message);
+  }
+}
+
 export function useEvents() {
   const getAllEvents = useCallback(
     async ({ page = 1, limit = 10, sort = "date", order = "asc" }) => {
@@ -45,7 +61,7 @@ export function useEvents() {
       throw new Error("Unauthorized: Admin access required");
     }
 
-    const eventPayload = {
+    const eventInformation = {
       ...eventData,
       creator_id: parseInt(user.id),
       event_type_id: parseInt(eventData.event_type_id),
@@ -55,7 +71,7 @@ export function useEvents() {
     };
 
     try {
-      const response = await api.post("/api/admin/events", eventPayload, {
+      const response = await api.post("/api/admin/events", eventInformation, {
         headers: {
           "user-role": "admin",
           "user-id": user.id,
