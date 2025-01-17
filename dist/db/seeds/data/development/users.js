@@ -8,7 +8,7 @@ if (!process.env.ADMIN_PASSWORD || !process.env.USER_PASSWORD) {
 }
 module.exports = [{
   name: "Sarah Johnson",
-  email: "sarah.johnson@techevents.com",
+  email: "sarahjohnsontest84@gmail.com",
   password: process.env.ADMIN_PASSWORD,
   role: "admin",
   company: "TechEvents UK"
@@ -20,7 +20,7 @@ module.exports = [{
   company: "TechEvents UK"
 }, {
   name: "Emma Wilson",
-  email: "emma.w@gmail.com",
+  email: "emmawilsontest84@gmail.com",
   password: process.env.USER_PASSWORD,
   role: "user",
   company: "Startup Labs"
