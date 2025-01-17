@@ -7,10 +7,14 @@ import App from "./App";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter basename="/Launchpad-Events">
+    <BrowserRouter>
       <AuthProvider>
         <App />
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 );
+
+{
+  /* <BrowserRouter basename="/Launchpad-Events"> */
+}
