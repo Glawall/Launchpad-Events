@@ -5,8 +5,8 @@ import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
 import App from "./App";
 
-const basePath = process.env.VITE_BASE_PATH;
-console.log(VITE_BASE_PATH);
+const basePath = import.meta.env.VITE_BASE_PATH || "";
+console.log(basePath);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
