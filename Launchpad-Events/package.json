@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "NODE_ENV=production vite build",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build -- --mode production",
     "deploy": "gh-pages -d dist"
   },
   "homepage": "https://glawall.github.io/Launchpad-Events",
