@@ -8,7 +8,6 @@ const api = axios.create({
   withCredentials: false,
 });
 
-// Request interceptor
 api.interceptors.request.use((config) => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   if (user?.role) {
@@ -24,7 +23,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor
 api.interceptors.response.use(
   (response) => {
     console.log("Response success:", {
