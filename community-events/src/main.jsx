@@ -5,16 +5,14 @@ import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
 import App from "./App";
 
+const basePath = process.env.VITE_BASE_PATH || "";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basePath}>
       <AuthProvider>
         <App />
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 );
-
-{
-  /* <BrowserRouter basename="/Launchpad-Events"> */
-}
