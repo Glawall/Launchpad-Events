@@ -15,6 +15,68 @@ A modern web application for managing and participating in community events. Bui
 - 📍 Venue Location Management
 - 👤 Attendee Management
 
+## Hosting
+
+### Local Development
+
+1. Navigate to the frontend directory:
+
+```bash
+cd Launchpad-Events
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create `.env.development` file:
+
+```
+VITE_BASE_PATH=/
+```
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`
+
+### Production Deployment
+
+1. Create `.env.production` file:
+
+```
+VITE_BASE_PATH=/Launchpad-Events/
+```
+
+2. Build and deploy to GitHub Pages:
+
+```bash
+npm run deploy
+```
+
+The application will be deployed to `https://glawall.github.io/Launchpad-Events/`
+
+## Test Users
+
+### Admin User
+
+```
+Email:
+Password:
+```
+
+### Regular User
+
+```
+Email:
+Password:
+```
+
 ## Tech Stack
 
 ### Frontend
