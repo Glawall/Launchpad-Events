@@ -8,7 +8,10 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 
 function App() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
+  console.log("User data:", user);
+  console.log("Is Admin:", isAdmin);
+  console.log("User role:", user?.role);
 
   return (
     <>

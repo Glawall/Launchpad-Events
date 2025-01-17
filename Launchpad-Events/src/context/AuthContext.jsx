@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { useAuth as useAuthHook } from "../hooks/api-hooks";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
 
@@ -12,10 +13,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const userData = await validateCredentials({ email, password });
+      const response = await validateCredentials({ email, password });
+      const decodedToken = jwtDecode(response);
+      const userData = {
+        token: response,
+        email: decodedToken.email,
+        role: decodedToken.role,
+        id: decodedToken.id,
+      };
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
-
       return userData;
     } catch (error) {
       console.error("Login error:", error);
