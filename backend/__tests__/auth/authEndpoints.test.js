@@ -20,19 +20,21 @@ describe("POST /api/auth/login", () => {
   });
 
   describe("Successful login", () => {
-    test("200: Returns JWT token for valid credentials", async () => {
+    test("200: Returns JWT token with user data for valid credentials", async () => {
       const response = await request(app).post("/api/auth/login").send({
         email: "admin@example.com",
         password: "admin123",
       });
 
       expect(response.status).toBe(200);
-
       expect(response.body).toBeDefined();
 
       const decodedToken = jwt.verify(response.body, "SECRET_KEY");
       expect(decodedToken).toMatchObject({
         email: "admin@example.com",
+        id: expect.any(Number),
+        role: expect.any(String),
+        name: expect.any(String),
         iat: expect.any(Number),
         exp: expect.any(Number),
       });
