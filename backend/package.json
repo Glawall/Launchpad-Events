@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest",
-    "build": "babel backend/app --out-dir dist",
+    "build": "npm ci && npx rimraf ./dist && babel backend/app --out-dir dist",
     "test:watch": "NODE_ENV=test jest --watch",
     "test:coverage": "NODE_ENV=test jest --coverage",
     "dev": "NODE_ENV=development nodemon --exec babel-node app/server.js",
@@ -28,9 +28,11 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
+    "rimraf": "^6.0.1",
     "save": "^2.9.0"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -38,7 +40,6 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
     "pg-format": "^1.0.4",
-    "supertest": "^7.0.0",
-    "bcrypt": "^5.1.1"
+    "supertest": "^7.0.0"
   }
 }
