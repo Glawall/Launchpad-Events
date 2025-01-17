@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest",
-    "build": "npm ci && npx rimraf ./dist && babel backend/app --out-dir dist",
+    "build": "npm ci && npx rimraf ./dist && babel app --out-dir dist",
     "test:watch": "NODE_ENV=test jest --watch",
     "test:coverage": "NODE_ENV=test jest --coverage",
     "dev": "NODE_ENV=development nodemon --exec babel-node app/server.js",
