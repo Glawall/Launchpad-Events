@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
+  "homepage": "https://glawall.github.io/Launchpad-Events",
   "dependencies": {
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
@@ -23,7 +26,7 @@
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
-    "gh-pages": "^6.2.0",
+    "gh-pages": "^6.3.0",
     "globals": "^15.13.0",
     "vite": "^6.0.3"
   }
