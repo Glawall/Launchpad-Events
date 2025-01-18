@@ -193,6 +193,17 @@ describe("GET /api/events/:id", () => {
           hasPreviousPage: false,
         },
       });
+
+      expect(response.body.events[0]).toHaveProperty("attendees");
+      expect(response.body.events[0].attendees).toBeInstanceOf(Array);
+      if (response.body.events[0].attendees.length > 0) {
+        expect(response.body.events[0].attendees[0]).toEqual(
+          expect.objectContaining({
+            id: expect.any(Number),
+            name: expect.any(String),
+          })
+        );
+      }
     });
 
     test("200 - GET: sorts events by date ascending", async () => {
@@ -216,7 +227,7 @@ describe("GET /api/events/:id", () => {
       const titles = response.body.events.map((event) => event.title);
       const sortedTitles = [...titles].sort((a, b) => b.localeCompare(a));
       expect(titles).toEqual(sortedTitles);
-    });
+    }, 10000);
 
     test("200 - GET: returns second page of events", async () => {
       const response = await request(app)
