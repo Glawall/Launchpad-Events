@@ -11,7 +11,7 @@
     "dev": "NODE_ENV=development nodemon --exec babel-node app/server.js",
     "start": "node dist/server.js",
     "setup-dbs": "psql -f backend/app/db/setup.sql",
-    "seed": "babel-node backend/app/db/seeds/run-seed.js",
+    "seed": "babel-node app/db/seeds/run-seed.js",
     "seed-test": "NODE_ENV=test npm run seed",
     "seed-dev": "NODE_ENV=development npm run seed",
     "seed-prod": "NODE_ENV=production npm run seed"

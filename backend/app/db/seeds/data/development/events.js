@@ -2,7 +2,8 @@ module.exports = [
   {
     title: "Tech Conference 2024",
     description: "Annual tech conference featuring latest innovations",
-    date: new Date("2024-06-15T09:00:00"),
+    date: "2025-01-20T14:00:00Z",
+    end_date: "2025-01-20T16:00:00Z",
     capacity: 200,
     location_name: "ExCeL London",
     location_address: "Royal Victoria Dock, 1 Western Gateway, London E16 1XL",
@@ -14,7 +15,8 @@ module.exports = [
   {
     title: "Web Development Workshop",
     description: "Hands-on workshop for modern web development",
-    date: new Date("2024-05-20T10:00:00"),
+    date: "2025-01-23T15:00:00Z",
+    end_date: "2025-01-23T17:00:00Z",
     capacity: 30,
     location_name: "Manchester Technology Centre",
     location_address: "Oxford Road, Manchester M1 7ED",
@@ -26,7 +28,8 @@ module.exports = [
   {
     title: "AI & Machine Learning Meetup",
     description: "Monthly meetup for AI enthusiasts",
-    date: new Date("2024-04-10T18:30:00"),
+    date: "2025-01-26T18:30:00Z",
+    end_date: "2025-01-26T20:30:00Z",
     capacity: 50,
     location_name: "Innovation Birmingham Campus",
     location_address: "Holt St, Birmingham B7 4BB",
@@ -38,7 +41,8 @@ module.exports = [
   {
     title: "Data Science Bootcamp",
     description: "Intensive 2-day data science training",
-    date: new Date("2024-07-01T09:00:00"),
+    date: "2025-01-29T09:00:00Z",
+    end_date: "2025-01-30T17:00:00Z",
     capacity: 25,
     location_name: "Leeds Digital Hub",
     location_address: "Platform, New Station St, Leeds LS1 4JB",
@@ -50,7 +54,8 @@ module.exports = [
   {
     title: "Cybersecurity Summit",
     description: "Annual security conference and networking",
-    date: new Date("2024-08-15T09:00:00"),
+    date: "2025-02-02T09:00:00Z",
+    end_date: "2025-02-03T17:00:00Z",
     capacity: 150,
     location_name: "Technology & Innovation Centre",
     location_address: "99 George St, Glasgow G1 1RD",
@@ -62,7 +67,8 @@ module.exports = [
   {
     title: "Mobile App Development Workshop",
     description: "Learn to build mobile apps from scratch",
-    date: new Date("2024-05-05T10:00:00"),
+    date: "2025-02-05T10:00:00Z",
+    end_date: "2025-02-05T16:00:00Z",
     capacity: 40,
     location_name: "Engine Shed",
     location_address: "Station Approach, Temple Meads, Bristol BS1 6QH",
@@ -74,7 +80,8 @@ module.exports = [
   {
     title: "Cloud Computing Conference",
     description: "Latest trends in cloud technologies",
-    date: new Date("2024-09-20T09:00:00"),
+    date: "2025-02-08T09:00:00Z",
+    end_date: "2025-02-08T17:00:00Z",
     capacity: 175,
     location_name: "Edinburgh International Conference Centre",
     location_address: "The Exchange, 150 Morrison St, Edinburgh EH3 8EE",
@@ -86,7 +93,8 @@ module.exports = [
   {
     title: "DevOps Networking Event",
     description: "Evening of DevOps discussions and networking",
-    date: new Date("2024-06-30T18:00:00"),
+    date: "2025-02-11T18:00:00Z",
+    end_date: "2025-02-11T20:00:00Z",
     capacity: 60,
     location_name: "Baltic Triangle",
     location_address: "Baltic Creative Campus, Jamaica St, Liverpool L1 0AF",
@@ -98,7 +106,8 @@ module.exports = [
   {
     title: "UI/UX Design Workshop",
     description: "Master modern design principles",
-    date: new Date("2024-07-15T10:00:00"),
+    date: "2025-02-14T10:00:00Z",
+    end_date: "2025-02-14T16:00:00Z",
     capacity: 35,
     location_name: "Tramshed Tech",
     location_address: "Pendyris St, Cardiff CF11 6BH",
@@ -110,7 +119,8 @@ module.exports = [
   {
     title: "Blockchain Technology Summit",
     description: "Exploring the future of blockchain",
-    date: new Date("2024-08-01T09:00:00"),
+    date: "2025-02-17T09:00:00Z",
+    end_date: "2025-02-17T17:00:00Z",
     capacity: 120,
     location_name: "The Core",
     location_address: "Bath Lane, Newcastle Helix, Newcastle upon Tyne NE4 5TF",
@@ -122,7 +132,8 @@ module.exports = [
   {
     title: "Python Programming Workshop",
     description: "From basics to advanced Python concepts",
-    date: new Date("2024-06-01T10:00:00"),
+    date: "2025-02-20T10:00:00Z",
+    end_date: "2025-02-20T16:00:00Z",
     capacity: 45,
     location_name: "Electric Works",
     location_address: "Sheffield Digital Campus, Sheffield S1 2BJ",
@@ -134,7 +145,8 @@ module.exports = [
   {
     title: "Women in Tech Meetup",
     description: "Networking event for women in technology",
-    date: new Date("2024-05-25T18:00:00"),
+    date: "2025-02-23T18:00:00Z",
+    end_date: "2025-02-23T20:00:00Z",
     capacity: 80,
     location_name: "Ormeau Baths",
     location_address: "18 Ormeau Ave, Belfast BT2 8HS",
@@ -146,7 +158,8 @@ module.exports = [
   {
     title: "IoT Innovation Conference",
     description: "Latest in Internet of Things technology",
-    date: new Date("2024-09-10T09:00:00"),
+    date: "2025-02-26T09:00:00Z",
+    end_date: "2025-02-26T17:00:00Z",
     capacity: 160,
     location_name: "Nottingham Conference Centre",
     location_address: "Burton St, Nottingham NG1 4BU",
