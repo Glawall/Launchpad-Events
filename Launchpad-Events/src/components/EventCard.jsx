@@ -1,84 +1,53 @@
-import { useState, useEffect } from "react";
-import { useAttendees } from "../hooks/api-hooks";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { formatDate, formatTimeRange } from "../utils/date-utils";
+import useEventAttendance from "../hooks/useEventAttendance";
 
-export default function EventCard({ event }) {
-  const [attending, setAttending] = useState(false);
-  const [loading, setLoading] = useState(false);
+export default function EventCard({ event, onEventUpdate }) {
   const { user } = useAuth();
-  const { addAttendee, checkAttendance } = useAttendees();
-
-  useEffect(() => {
-    if (user && event.id) {
-      const isAttending = checkAttendance(event.id, user.id);
-      setAttending(isAttending);
-    }
-  }, [user, event.id, checkAttendance]);
-
-  const handleAttend = async () => {
-    setLoading(true);
-    try {
-      await addAttendee(event.id, user.id);
-      setAttending(true);
-    } catch (error) {
-      console.error("Failed to attend event:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createGoogleCalendarLink = () => {
-    const startDate = new Date(event.date);
-    const endDate = new Date(event.end_date);
-
-    const params = {
-      action: "TEMPLATE",
-      text: event.title,
-      details: event.description,
-      location: event.location_name,
-      dates: `${startDate.toISOString().replace(/-|:|\.\d+/g, "")}/${endDate
-        .toISOString()
-        .replace(/-|:|\.\d+/g, "")}`,
-    };
-
-    const url = `https://calendar.google.com/calendar/render?${new URLSearchParams(
-      params
-    )}`;
-    return url;
-  };
+  const { attending, loading, handleAttendance } = useEventAttendance(
+    event,
+    onEventUpdate
+  );
 
   return (
     <div className="card">
       <h3 className="card-title">{event.title}</h3>
-      <p className="card-text">{event.description}</p>
       <div className="card-info">
-        <p>Location: {event.location_name}</p>
-        <p>Start: {new Date(event.date).toLocaleString()}</p>
-        <p>End: {new Date(event.end_date).toLocaleString()}</p>
-        <p>Spots: {event.capacity}</p>
+        <div className="info-group">
+          <span className="info-label">Location</span>
+          <p>{event.location_name}</p>
+        </div>
+        <div className="info-group">
+          <span className="info-label">Date</span>
+          <p>{formatDate(event.date)}</p>
+        </div>
+        <div className="info-group">
+          <span className="info-label">Time</span>
+          <p>{formatTimeRange(event.date, event.end_date)}</p>
+        </div>
       </div>
       <div className="card-actions">
-        {!attending ? (
-          <button
-            onClick={handleAttend}
-            className="btn-blue"
-            disabled={loading}
-          >
-            {loading ? "Joining..." : "Attend Event"}
-          </button>
-        ) : (
-          <div className="attend-success">
-            <p className="success-text">You're attending!</p>
-            <a
-              href={createGoogleCalendarLink()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gray"
+        <div className="card-buttons">
+          {user && (
+            <button
+              onClick={handleAttendance}
+              disabled={loading || event.attendees.length >= event.capacity}
+              className={`btn ${attending ? "btn-red" : "btn-blue"}`}
             >
-              Add to Google Calendar
-            </a>
-          </div>
-        )}
+              {loading
+                ? attending
+                  ? "Canceling..."
+                  : "Registering..."
+                : attending
+                ? "Cancel Registration"
+                : "Register"}
+            </button>
+          )}
+          <Link to={`/events/${event.id}`} className="btn-link">
+            View Details →
+          </Link>
+        </div>
       </div>
     </div>
   );
