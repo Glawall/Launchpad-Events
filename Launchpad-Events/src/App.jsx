@@ -6,6 +6,8 @@ import CreateEvent from "./components/CreateEvent";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import EventCard from "./components/EventCard";
+import Event from "./components/Event";
 
 function App() {
   const { user, isAdmin } = useAuth();
@@ -49,6 +51,14 @@ function App() {
             element={
               <ProtectedRoute adminOnly>
                 <CreateEvent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/events/:id"
+            element={
+              <ProtectedRoute>
+                <Event />
               </ProtectedRoute>
             }
           />

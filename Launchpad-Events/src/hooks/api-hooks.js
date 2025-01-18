@@ -19,7 +19,6 @@ export function useAuth() {
 }
 
 export async function signup(email, name, password) {
-  console.log(email, name, password);
   try {
     const response = await api.post("/api/users", {
       email,
@@ -36,16 +35,29 @@ export async function signup(email, name, password) {
 
 export function useEvents() {
   const getAllEvents = useCallback(
-    async ({ page = 1, limit = 10, sort = "date", order = "asc" }) => {
-      const response = await api.get("/api/events", {
-        params: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          sort,
-          order,
-        },
-      });
-      return response.data;
+    async ({
+      page = 1,
+      limit = 10,
+      sort = "date",
+      order = "asc",
+      status,
+    } = {}) => {
+      try {
+        const response = await api.get("/api/events", {
+          params: {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            sort,
+            order,
+            status,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        throw new Error(
+          error.response?.data?.message || "Failed to fetch events"
+        );
+      }
     },
     []
   );
@@ -62,12 +74,15 @@ export function useEvents() {
     }
 
     const eventInformation = {
-      ...eventData,
-      creator_id: parseInt(user.id),
-      event_type_id: parseInt(eventData.event_type_id),
-      capacity: parseInt(eventData.capacity),
+      title: eventData.title,
+      description: eventData.description,
       date: eventData.date,
       end_date: eventData.end_date,
+      location_name: eventData.location_name,
+      location_address: eventData.location_address,
+      capacity: parseInt(eventData.capacity),
+      creator_id: parseInt(user.id),
+      event_type_id: 1,
     };
 
     try {
@@ -80,7 +95,9 @@ export function useEvents() {
       });
       return response.data;
     } catch (error) {
-      throw error;
+      throw new Error(
+        error.response?.data?.message || "Failed to create event"
+      );
     }
   }, []);
 
@@ -89,30 +106,46 @@ export function useEvents() {
 
 export function useAttendees() {
   const addAttendee = useCallback(async (eventId, userId) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user.role || !user.id) {
+      throw new Error("User information is missing");
+    }
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      const attendances = JSON.parse(
-        localStorage.getItem("attendances") || "{}"
+      const response = await api.post(
+        `/api/events/${eventId}/users/${userId}/attendees`,
+        { eventId, userId },
+        {
+          headers: {
+            "user-role": user.role,
+            "user-id": user.id,
+          },
+        }
       );
-      if (!attendances[eventId]) {
-        attendances[eventId] = [];
-      }
-      attendances[eventId].push(userId);
-      localStorage.setItem("attendances", JSON.stringify(attendances));
-
-      return { success: true };
+      return response.data;
     } catch (error) {
-      throw new Error("Failed to register for event");
+      throw new Error(
+        error.response?.data?.message || "Failed to add to event"
+      );
     }
   }, []);
 
-  const checkAttendance = useCallback((eventId, userId) => {
-    const attendances = JSON.parse(localStorage.getItem("attendances") || "{}");
-    return attendances[eventId]?.includes(userId) || false;
+  const deleteAttendee = useCallback(async (eventId, userId) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    try {
+      await api.delete(`/api/events/${eventId}/users/${userId}/attendees`, {
+        headers: {
+          "user-role": user.role,
+          "user-id": user.id,
+        },
+      });
+      return true;
+    } catch (error) {
+      throw new Error("Failed to remove from event");
+    }
   }, []);
 
-  return { addAttendee, checkAttendance };
+  return { addAttendee, deleteAttendee };
 }
 
 export function useAdmin() {

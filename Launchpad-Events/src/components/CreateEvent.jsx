@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "../hooks/api-hooks";
-import { useAuth } from "../context/AuthContext";
 
 const MOCK_EVENT_TYPES = [
   { id: 1, name: "Conference" },
@@ -14,62 +13,67 @@ const MOCK_EVENT_TYPES = [
 export default function CreateEvent() {
   const navigate = useNavigate();
   const { createEvent } = useEvents();
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    capacity: "",
+    date: "",
+    time: "09:00",
+    end_date: "",
+    end_time: "11:00",
     location_name: "",
     location_address: "",
-    date: "",
-    event_type_id: "",
-    status: "upcoming",
-    timezone: "Europe/London",
-    role: "admin",
-    created_by: "sarah.johnson@example.com",
+    capacity: "",
+    event_type_id: "1",
   });
 
-  const handleChange = (e) => {
+  const handleDateTimeChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    setFormData((prev) => {
+      const newData = { ...prev, [name]: value };
+
+      if (name === "date") {
+        newData.end_date = value;
+      }
+      if (name === "time") {
+        const [hours, minutes] = value.split(":");
+        const newTime = new Date();
+        newTime.setHours(parseInt(hours) + 2);
+        newTime.setMinutes(parseInt(minutes));
+
+        newData.end_time = `${String(newTime.getHours()).padStart(
+          2,
+          "0"
+        )}:${String(newTime.getMinutes()).padStart(2, "0")}`;
+      }
+
+      return newData;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-
-    const eventDate = new Date(formData.date);
-    const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
-
-    const eventData = {
-      title: formData.title,
-      description: formData.description,
-      date: eventDate.toISOString(),
-      end_date: endDate.toISOString(),
-      capacity: parseInt(formData.capacity),
-      location_name: formData.location_name,
-      location_address: formData.location_address,
-      event_type_id: parseInt(formData.event_type_id),
-      status: "upcoming",
-      timezone: "Europe/London",
-    };
+    setError(null);
 
     try {
-      console.log("Submitting event data:", eventData);
+      const eventData = {
+        ...formData,
+        date: new Date(`${formData.date}T${formData.time}`).toISOString(),
+        end_date: new Date(
+          `${formData.end_date}T${formData.end_time}`
+        ).toISOString(),
+        capacity: parseInt(formData.capacity),
+        event_type_id: parseInt(formData.event_type_id),
+      };
+
       await createEvent(eventData);
-      navigate("/events", { replace: true });
+      navigate("/events");
     } catch (err) {
-      console.error("Create event error:", err.response?.data || err);
-      setError(
-        err.response?.data?.message || err.message || "Failed to create event"
-      );
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -77,111 +81,174 @@ export default function CreateEvent() {
 
   return (
     <div className="wrapper">
-      <h2 className="title">Create Event</h2>
       <form onSubmit={handleSubmit} className="form">
+        <h2 className="form-title">Create Event</h2>
+
+        <div className="form-row">
+          <div className="input-group">
+            <label className="label">Title</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              className="input"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="input-group">
+            <label className="label">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              className="input"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <label className="label">Start Date</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleDateTimeChange}
+            className="input"
+            required
+          />
+        </div>
+
+        <div className="form-row">
+          <label className="label">Start Time</label>
+          <input
+            type="time"
+            name="time"
+            value={formData.time}
+            onChange={handleDateTimeChange}
+            className="input"
+            required
+            step="900"
+          />
+        </div>
+
+        <div className="form-row">
+          <label className="label">End Date</label>
+          <input
+            type="date"
+            name="end_date"
+            value={formData.end_date}
+            onChange={(e) =>
+              setFormData({ ...formData, end_date: e.target.value })
+            }
+            className="input"
+            required
+          />
+        </div>
+
+        <div className="form-row">
+          <label className="label">End Time</label>
+          <input
+            type="time"
+            name="end_time"
+            value={formData.end_time}
+            onChange={(e) =>
+              setFormData({ ...formData, end_time: e.target.value })
+            }
+            className="input"
+            required
+            step="900"
+          />
+        </div>
+
+        <div className="form-row">
+          <div className="input-group">
+            <label className="label">Event Type</label>
+            <select
+              name="event_type_id"
+              value={formData.event_type_id}
+              onChange={(e) =>
+                setFormData({ ...formData, event_type_id: e.target.value })
+              }
+              className="input"
+              required
+            >
+              {MOCK_EVENT_TYPES.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="input-group">
+            <label className="label">Location Name</label>
+            <input
+              type="text"
+              name="location_name"
+              value={formData.location_name}
+              onChange={(e) =>
+                setFormData({ ...formData, location_name: e.target.value })
+              }
+              className="input"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="input-group">
+            <label className="label">Location Address</label>
+            <input
+              type="text"
+              name="location_address"
+              value={formData.location_address}
+              onChange={(e) =>
+                setFormData({ ...formData, location_address: e.target.value })
+              }
+              className="input"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="input-group">
+            <label className="label">Capacity</label>
+            <input
+              type="number"
+              name="capacity"
+              value={formData.capacity}
+              onChange={(e) =>
+                setFormData({ ...formData, capacity: e.target.value })
+              }
+              className="input"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="btn-group">
+          <button type="submit" className="btn-blue" disabled={loading}>
+            {loading ? "Creating..." : "Create Event"}
+          </button>
+        </div>
+
         {error && (
           <div className="error-box">
-            <div className="error-text">{error}</div>
+            <p className="error-text">{error}</p>
           </div>
         )}
-        <div className="form-row">
-          <label className="label">Event Type</label>
-          <select
-            name="event_type_id"
-            required
-            className="input"
-            value={formData.event_type_id}
-            onChange={handleChange}
-          >
-            <option value="">Select an event type</option>
-            {MOCK_EVENT_TYPES.map((type) => (
-              <option key={type.id} value={type.id}>
-                {type.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-row">
-          <label className="label">Event Title</label>
-          <input
-            type="text"
-            name="title"
-            required
-            className="input"
-            value={formData.title}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-row">
-          <label className="label">Description</label>
-          <textarea
-            name="description"
-            required
-            rows={4}
-            className="input"
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-row">
-          <label className="label">Date and Time</label>
-          <input
-            type="datetime-local"
-            name="date"
-            required
-            className="input"
-            value={formData.date}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-row">
-          <label className="label">Venue Name</label>
-          <input
-            type="text"
-            name="location_name"
-            required
-            className="input"
-            value={formData.location_name}
-            onChange={handleChange}
-            placeholder="e.g., Town Hall, Conference Center"
-          />
-        </div>
-        <div className="form-row">
-          <label className="label">Venue Address</label>
-          <input
-            type="text"
-            name="location_address"
-            required
-            className="input"
-            value={formData.location_address}
-            onChange={handleChange}
-            placeholder="Full address"
-          />
-        </div>
-        <div className="form-row">
-          <label className="label">Capacity</label>
-          <input
-            type="number"
-            name="capacity"
-            required
-            min="1"
-            className="input"
-            value={formData.capacity}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="btn-group">
-          <button
-            type="button"
-            onClick={() => navigate("/events")}
-            className="btn-gray"
-          >
-            Cancel
-          </button>
-          <button type="submit" className="btn-blue" disabled={loading}>
-            {loading ? "Creating..." : "Create"}
-          </button>
-        </div>
       </form>
     </div>
   );
