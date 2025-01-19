@@ -1,14 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEvents } from "../hooks/api-hooks";
-
-const MOCK_EVENT_TYPES = [
-  { id: 1, name: "Conference" },
-  { id: 2, name: "Workshop" },
-  { id: 3, name: "Meetup" },
-  { id: 4, name: "Social" },
-  { id: 5, name: "Training" },
-];
+import { useEvents, useEventTypes } from "../hooks/api-hooks";
+import EventTypeSelect from "./EventTypeSelect";
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -170,24 +163,12 @@ export default function CreateEvent() {
         </div>
 
         <div className="form-row">
-          <div className="input-group">
-            <label className="label">Event Type</label>
-            <select
-              name="event_type_id"
-              value={formData.event_type_id}
-              onChange={(e) =>
-                setFormData({ ...formData, event_type_id: e.target.value })
-              }
-              className="input"
-              required
-            >
-              {MOCK_EVENT_TYPES.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <EventTypeSelect
+            value={formData.event_type_id}
+            onChange={(value) =>
+              setFormData({ ...formData, event_type_id: value })
+            }
+          />
         </div>
 
         <div className="form-row">

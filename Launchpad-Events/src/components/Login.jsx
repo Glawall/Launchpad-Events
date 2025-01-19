@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -8,62 +9,74 @@ const Login = () => {
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const user = await login(email, password);
       console.log("Logged in successfully as:", user.role);
       navigate("/events");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="wrapper">
-      <div className="form">
-        <h2 className="title">Sign in to your account</h2>
-        <form onSubmit={handleSubmit} className="login-form">
+      <form onSubmit={handleSubmit} className="form">
+        <h2 className="form-title">Login</h2>
+
+        <div className="form-row">
           <div className="input-group">
-            <label htmlFor="email">Email</label>
+            <label className="label">Email</label>
             <input
-              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
               className="input"
+              required
             />
           </div>
+        </div>
+
+        <div className="form-row">
           <div className="input-group">
-            <label htmlFor="password">Password</label>
+            <label className="label">Password</label>
             <input
-              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
               className="input"
+              required
             />
           </div>
-          {error && (
-            <div className="error-box">
-              <p className="error-text">{error}</p>
-            </div>
-          )}
-          <button type="submit" className="btn-primary">
-            Sign in
+        </div>
+
+        {error && (
+          <div className="error-box">
+            <p className="error-text">{error}</p>
+          </div>
+        )}
+
+        <div className="btn-group">
+          <button type="submit" className="btn-blue" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
-          <button
-            type="button"
-            className="btn-secondary mt-4"
-            onClick={() => navigate("/signup")}
-          >
-            Create an account
-          </button>
-        </form>
-      </div>
+        </div>
+
+        <div className="form-footer">
+          <p>
+            Don't have an account?{" "}
+            <Link to="/signup" className="link">
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </form>
     </div>
   );
 };

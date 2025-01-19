@@ -20,9 +20,11 @@ export default function Navigation() {
                 Events
               </Link>
               {isAdmin && (
-                <Link to="/events/create" className="nav-item">
-                  Create Event
-                </Link>
+                <>
+                  <Link to="/events/create" className="nav-item">
+                    Create Event
+                  </Link>
+                </>
               )}
             </div>
           </div>
@@ -30,12 +32,12 @@ export default function Navigation() {
             {user ? (
               <div className="user-info">
                 <span className="user-name">{user.name}</span>
-                <button onClick={logout} className="nav-item btn-red">
+                <button onClick={logout} className="btn-red">
                   Logout
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="nav-item btn-blue">
+              <Link to="/login" className="btn-blue">
                 Login
               </Link>
             )}

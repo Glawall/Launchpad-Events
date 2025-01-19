@@ -5,13 +5,6 @@ import EventCard from "./EventCard";
 import { useAuth } from "../context/AuthContext";
 import EventCalendar from "./EventCalendar";
 
-const MOCK_EVENT_TYPES = [
-  { id: 1, name: "Workshop" },
-  { id: 2, name: "Social" },
-  { id: 3, name: "Tech Talk" },
-  { id: 4, name: "Conference" },
-];
-
 export default function EventList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [eventsList, setEventsList] = useState([]);
@@ -27,10 +20,10 @@ export default function EventList() {
   const currentPage = parseInt(searchParams.get("page") || "1");
   const currentSort = searchParams.get("sort") || "date";
   const currentOrder = searchParams.get("order") || "asc";
-  const currentType = searchParams.get("type") || "all";
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const data = await getAllEvents({
           page: currentPage,
@@ -44,11 +37,10 @@ export default function EventList() {
           limit: 100,
           sort: "date",
           order: "asc",
-          status: "upcoming",
         });
 
-        const totalPages = Math.ceil(firstPage.pagination.totalCount / 100);
         let allEvents = [...firstPage.events];
+        const totalPages = Math.ceil(firstPage.pagination.totalCount / 100);
 
         for (let page = 2; page <= totalPages; page++) {
           const nextPage = await getAllEvents({
@@ -56,7 +48,6 @@ export default function EventList() {
             limit: 100,
             sort: "date",
             order: "asc",
-            status: "upcoming",
           });
           allEvents = [...allEvents, ...nextPage.events];
         }
@@ -72,7 +63,7 @@ export default function EventList() {
     };
 
     fetchEvents();
-  }, [currentPage, currentSort, currentOrder, pageSize]);
+  }, [currentPage, currentSort, currentOrder, pageSize, getAllEvents]);
 
   const handleEventUpdate = (updatedEvent) => {
     setEventsList((currentEvents) =>
@@ -89,7 +80,17 @@ export default function EventList() {
 
   const handleDateSelect = (events) => {
     if (events.length > 0) {
-      setSelectedDate(new Date(events[0].date));
+      const selectedEvent = events[0];
+      setSelectedDate(new Date(selectedEvent.date));
+
+      const eventIndex = allEvents.findIndex((e) => e.id === selectedEvent.id);
+      const pageNumber = Math.floor(eventIndex / pageSize) + 1;
+
+      setSearchParams({
+        page: pageNumber.toString(),
+        sort: "date",
+        order: "asc",
+      });
     }
   };
 
@@ -106,25 +107,6 @@ export default function EventList() {
         <div className="events-layout">
           <div className="events-list">
             <div className="sort-controls">
-              <select
-                value={currentType}
-                onChange={(e) =>
-                  setSearchParams({
-                    page: "1",
-                    sort: currentSort,
-                    order: currentOrder,
-                    type: e.target.value,
-                  })
-                }
-                className="type-filter"
-              >
-                <option value="all">All Types</option>
-                {MOCK_EVENT_TYPES.map((type) => (
-                  <option key={type.id} value={type.id}>
-                    {type.name}
-                  </option>
-                ))}
-              </select>
               <button
                 onClick={() =>
                   setSearchParams({

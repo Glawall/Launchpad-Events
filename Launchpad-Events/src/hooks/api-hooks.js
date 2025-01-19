@@ -41,6 +41,7 @@ export function useEvents() {
       sort = "date",
       order = "asc",
       status,
+      type_id,
     } = {}) => {
       try {
         const response = await api.get("/api/events", {
@@ -50,13 +51,12 @@ export function useEvents() {
             sort,
             order,
             status,
+            type_id: type_id ? parseInt(type_id) : undefined,
           },
         });
         return response.data;
       } catch (error) {
-        throw new Error(
-          error.response?.data?.message || "Failed to fetch events"
-        );
+        throw new Error(message);
       }
     },
     []
@@ -69,9 +69,6 @@ export function useEvents() {
 
   const createEvent = useCallback(async (eventData) => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || user.role !== "admin") {
-      throw new Error("Unauthorized: Admin access required");
-    }
 
     const eventInformation = {
       title: eventData.title,
@@ -95,13 +92,35 @@ export function useEvents() {
       });
       return response.data;
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Failed to create event"
-      );
+      throw new Error(message);
     }
   }, []);
 
-  return { getAllEvents, getEventById, createEvent };
+  const updateEvent = useCallback(async (id, eventData) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    try {
+      const eventWithCreator = {
+        ...eventData,
+        creator_id: parseInt(user.id),
+      };
+
+      const response = await api.patch(
+        `/api/admin/events/${id}`,
+        eventWithCreator,
+        {
+          headers: {
+            "user-role": user.role,
+            "user-id": user.id,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(message);
+    }
+  }, []);
+
+  return { getAllEvents, getEventById, createEvent, updateEvent };
 }
 
 export function useAttendees() {
@@ -124,9 +143,7 @@ export function useAttendees() {
       );
       return response.data;
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Failed to add to event"
-      );
+      throw new Error(message);
     }
   }, []);
 
@@ -189,4 +206,59 @@ export function useUser() {
   }, []);
 
   return { getUserById, deleteUser };
+}
+
+export function useEventTypes() {
+  const getAllEventTypes = useCallback(async () => {
+    try {
+      const response = await api.get("/api/event-types");
+      return response.data;
+    } catch (error) {
+      throw new Error(message);
+    }
+  }, []);
+
+  const getEventTypeById = useCallback(async (id) => {
+    const response = await api.get(`/api/event-types/${id}`);
+    return response.data;
+  }, []);
+
+  const createEventType = useCallback(async (typeData) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    try {
+      const response = await api.post("/api/admin/event-types", typeData, {
+        headers: {
+          "user-role": user.role,
+          "user-id": user.id,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(message);
+    }
+  }, []);
+
+  const deleteEventType = useCallback(async (typeId) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    try {
+      const response = await api.delete(`/api/admin/event-types/${typeId}`, {
+        headers: {
+          "user-role": user.role,
+          "user-id": user.id,
+          "Content-Type": "application/json",
+        },
+      });
+      return true;
+    } catch (error) {
+      throw new Error(message);
+    }
+  }, []);
+
+  return {
+    getAllEventTypes,
+    getEventTypeById,
+    createEventType,
+    deleteEventType,
+  };
 }

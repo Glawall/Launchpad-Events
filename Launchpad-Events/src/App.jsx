@@ -1,19 +1,26 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./context/AuthContext";
+import { useAuth, AuthProvider } from "./context/AuthContext";
 import Navigation from "./components/layout/Navigation";
 import EventList from "./components/EventList";
 import CreateEvent from "./components/CreateEvent";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import EventCard from "./components/EventCard";
 import Event from "./components/Event";
+import { EventTypesProvider } from "./context/EventTypesContext";
 
 function App() {
-  const { user, isAdmin } = useAuth();
-  console.log("User data:", user);
-  console.log("Is Admin:", isAdmin);
-  console.log("User role:", user?.role);
+  return (
+    <AuthProvider>
+      <EventTypesProvider>
+        <AppContent />
+      </EventTypesProvider>
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const { user } = useAuth();
 
   return (
     <>
