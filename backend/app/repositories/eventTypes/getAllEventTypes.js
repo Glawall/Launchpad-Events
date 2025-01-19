@@ -3,12 +3,11 @@ import db from "../../connection.js";
 export const getAllEventTypes = async () => {
   const query = `
     SELECT 
-      id,
-      name,
-      created_at,
-      updated_at
+      event_types.*,
+      COALESCE(COUNT(events.id), 0) as event_count
     FROM event_types
-    ORDER BY name ASC
+    LEFT JOIN events ON events.event_type_id = event_types.id
+    GROUP BY event_types.id
   `;
 
   const result = await db.query(query);
