@@ -1,73 +1,94 @@
 import { useState } from "react";
 import { signup } from "../hooks/api-hooks";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true);
       await signup(email, name, password);
       navigate("/login");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="wrapper">
-      <div className="form">
-        <h2 className="title">Create an account</h2>
-        <form onSubmit={handleSubmit} className="login-form">
+      <form onSubmit={handleSubmit} className="form">
+        <h2 className="form-title">Create Account</h2>
+
+        <div className="form-row">
           <div className="input-group">
-            <label htmlFor="email">Email</label>
+            <label className="label">Name</label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input"
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="name">Full Name</label>
-            <input
-              id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
               className="input"
+              required
             />
           </div>
+        </div>
+
+        <div className="form-row">
           <div className="input-group">
-            <label htmlFor="password">Password</label>
+            <label className="label">Email</label>
             <input
-              id="password"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="input-group">
+            <label className="label">Password</label>
+            <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
               className="input"
+              required
             />
           </div>
-          {error && (
-            <div className="error-box">
-              <p className="error-text">{error}</p>
-            </div>
-          )}
-          <button type="submit" className="btn-primary">
-            Sign up
+        </div>
+
+        {error && (
+          <div className="error-box">
+            <p className="error-text">{error}</p>
+          </div>
+        )}
+
+        <div className="btn-group">
+          <button type="submit" className="btn-blue" disabled={loading}>
+            {loading ? "Creating account..." : "Create Account"}
           </button>
-        </form>
-      </div>
+        </div>
+
+        <div className="form-footer">
+          <p>
+            Already have an account?{" "}
+            <Link to="/login" className="link">
+              Login
+            </Link>
+          </p>
+        </div>
+      </form>
     </div>
   );
 };
