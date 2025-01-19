@@ -13,7 +13,7 @@ export const getAllEvents = async ({
   const sortField = validSortFields.includes(sort) ? sort : "date";
   const sortOrder = validOrders.includes(order.toLowerCase()) ? order : "asc";
 
-  const eventsQuery = `
+  const eventsQueryStr = `
     SELECT 
       events.*,
       event_types.name as event_type_name,
@@ -26,7 +26,7 @@ export const getAllEvents = async ({
     LIMIT $1 OFFSET $2
   `;
 
-  const result = await db.query(eventsQuery, [limit, offset]);
+  const result = await db.query(eventsQueryStr, [limit, offset]);
 
   const eventIds = result.rows.map((event) => event.id);
   const { rows: allAttendees } = await db.query(
