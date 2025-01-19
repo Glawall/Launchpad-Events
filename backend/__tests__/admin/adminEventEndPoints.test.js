@@ -131,8 +131,8 @@ describe("Admin Events API", () => {
     });
   });
 
-  describe("PUT /api/admin/events/:id", () => {
-    test("200 - PUT: responds with updated event when admin", async () => {
+  describe("PATCH /api/admin/events/:id", () => {
+    test("200 - PATCH: responds with updated event when admin", async () => {
       const updateData = {
         title: "Updated Event",
         description: "Updated Description",
@@ -149,7 +149,7 @@ describe("Admin Events API", () => {
       };
 
       const response = await request(app)
-        .put("/api/admin/events/1")
+        .patch("/api/admin/events/1")
         .set("user-role", "admin")
         .send(updateData);
 
@@ -167,9 +167,9 @@ describe("Admin Events API", () => {
       });
     });
 
-    test("404 - PUT: responds with error when event not found", async () => {
+    test("404 - PATCH: responds with error when event not found", async () => {
       const response = await request(app)
-        .put("/api/admin/events/999")
+        .patch("/api/admin/events/999")
         .set("user-role", "admin")
         .send({
           title: "Not Found Event",
@@ -188,9 +188,9 @@ describe("Admin Events API", () => {
       expect(response.body.message).toBe("Event not found");
     });
 
-    test("403 - PUT: responds with error when not admin", async () => {
+    test("403 - PATCH: responds with error when not admin", async () => {
       const response = await request(app)
-        .put("/api/admin/events/1")
+        .patch("/api/admin/events/1")
         .set("user-role", "user")
         .send({});
 
@@ -200,7 +200,7 @@ describe("Admin Events API", () => {
       );
     });
 
-    test("400 - PUT: responds with error when update data is invalid", async () => {
+    test("400 - PATCH: responds with error when update data is invalid", async () => {
       const invalidUpdate = {
         title: "Invalid Update",
         description: "Test Description",
@@ -216,7 +216,7 @@ describe("Admin Events API", () => {
       };
 
       const response = await request(app)
-        .put("/api/admin/events/1")
+        .patch("/api/admin/events/1")
         .set("user-role", "admin")
         .send(invalidUpdate);
 
@@ -225,8 +225,7 @@ describe("Admin Events API", () => {
     });
 
     test("401 - PUT: responds with error when not authenticated", async () => {
-      const response = await request(app).put("/api/admin/events/1").send({});
-
+      const response = await request(app).patch("/api/admin/events/1").send({});
       expect(response.status).toBe(401);
       expect(response.body.message).toBe("You need to be signed in");
     });

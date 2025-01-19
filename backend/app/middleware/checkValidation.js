@@ -137,3 +137,15 @@ export const checkEventCapacity = (event, attendees, userId) => {
 
   return true;
 };
+
+export const checkEventType = (eventTypeData) => {
+  const requiredFields = ["name", "description"];
+
+  for (const field of requiredFields) {
+    if (!eventTypeData[field]) {
+      throw createValidationError(`Missing required field: ${field}`);
+    }
+  }
+
+  return eventTypeData;
+};
