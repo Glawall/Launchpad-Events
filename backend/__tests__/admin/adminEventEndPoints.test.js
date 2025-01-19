@@ -224,8 +224,24 @@ describe("Admin Events API", () => {
       expect(response.body.message).toBe("Capacity must be a positive number");
     });
 
-    test("401 - PUT: responds with error when not authenticated", async () => {
-      const response = await request(app).patch("/api/admin/events/1").send({});
+    test("401 - PATCH: responds with error when not authenticated", async () => {
+      const updateData = {
+        title: "Updated Event",
+        description: "Updated Description",
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        end_date: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000
+        ),
+        capacity: 75,
+        location_name: "Updated Venue",
+        location_address: "456 Update St, London EC1N 2SW",
+        event_type_id: 1,
+        creator_id: 1,
+        status: "upcoming",
+      };
+      const response = await request(app)
+        .patch("/api/admin/events/1")
+        .send(updateData);
       expect(response.status).toBe(401);
       expect(response.body.message).toBe("You need to be signed in");
     });

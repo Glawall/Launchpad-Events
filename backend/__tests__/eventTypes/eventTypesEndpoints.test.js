@@ -21,7 +21,6 @@ describe("EventTypes API", () => {
   describe("GET /api/event-types", () => {
     test("200 - GET: Returns an array of all event types", async () => {
       const response = await request(app).get("/api/event-types");
-
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
 
@@ -29,8 +28,10 @@ describe("EventTypes API", () => {
         expect(eventType).toMatchObject({
           id: expect.any(Number),
           name: expect.any(String),
+          description: expect.any(String),
           created_at: expect.any(String),
           updated_at: expect.any(String),
+          event_count: expect.any(String),
         });
       });
 
@@ -89,6 +90,20 @@ describe("EventTypes API", () => {
   });
 
   describe("PATCH /api/admin/event-types/:id", () => {
+    test("404: returns error when event type doesn't exist", async () => {
+      const updatedData = {
+        name: "Updated name",
+        description: "Updated description",
+      };
+
+      const response = await request(app)
+        .patch(`/api/admin/event-types/9999`)
+        .set("user-role", "admin")
+        .send(updatedData);
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Event type not found");
+    });
     test("200: updates and returns the event type", async () => {
       const updatedData = {
         name: "Updated name",
@@ -108,21 +123,6 @@ describe("EventTypes API", () => {
         created_at: expect.any(String),
         updated_at: expect.any(String),
       });
-    });
-
-    test("404: returns error when event type doesn't exist", async () => {
-      const updatedData = {
-        name: "Updated name",
-        description: "Updated description",
-      };
-
-      const response = await request(app)
-        .patch(`/api/admin/event-types/9999`)
-        .set("user-role", "admin")
-        .send(updatedData);
-
-      expect(response.status).toBe(404);
-      expect(response.body.message).toBe("Event type not found");
     });
   });
 
