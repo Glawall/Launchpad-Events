@@ -3,9 +3,7 @@ import axios from "axios";
 const isDevelopment = import.meta.env.MODE === "development";
 
 const api = axios.create({
-  baseURL: isDevelopment
-    ? ""
-    : process.env.VITE_API_URL || "https://launchpad-events-api.onrender.com",
+  baseURL: "https://launchpad-events.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
