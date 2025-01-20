@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEvents } from "../hooks/api-hooks";
 import EventCard from "./EventCard";
 import { useAuth } from "../context/AuthContext";
 import EventCalendar from "./EventCalendar";
-import EventTypeSelect from "./EventTypeSelect";
 import { useEventTypesContext } from "../context/EventTypesContext";
+import Button from "./common/Button";
 
 export default function EventList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,6 +19,7 @@ export default function EventList() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [allEvents, setAllEvents] = useState([]);
   const { eventTypes } = useEventTypesContext();
+  const navigate = useNavigate();
 
   const currentPage = parseInt(searchParams.get("page") || "1");
   const currentSort = searchParams.get("sort") || "date";
@@ -29,12 +30,13 @@ export default function EventList() {
     const fetchEvents = async () => {
       setLoading(true);
       try {
+        const typeId = currentType !== "all" ? currentType : undefined;
         const data = await getAllEvents({
           page: currentPage,
           limit: pageSize,
           sort: currentSort,
           order: currentOrder,
-          type_id: currentType,
+          type_id: typeId,
         });
 
         const firstPage = await getAllEvents({
@@ -90,24 +92,27 @@ export default function EventList() {
     );
   };
 
-  const handleDateSelect = (events) => {
-    if (events.length > 0) {
-      const selectedEvent = events[0];
-      setSelectedDate(new Date(selectedEvent.date));
-
-      const eventIndex = allEvents.findIndex((e) => e.id === selectedEvent.id);
-      const pageNumber = Math.floor(eventIndex / pageSize) + 1;
-
-      setSearchParams({
-        page: pageNumber.toString(),
-        sort: "date",
-        order: "asc",
-      });
+  const handleDateSelect = (date, events) => {
+    if (events && events.length > 0) {
+      navigate(`/events/${events[0].id}`);
     }
+    setSelectedDate(date);
   };
 
-  const clearDateSelection = () => {
+  const handleShowAllEvents = () => {
     setSelectedDate(null);
+    setEventsList(allEvents);
+  };
+
+  const handleTypeFilter = (typeId) => {
+    setSearchParams((prev) => {
+      if (typeId === "all") {
+        prev.delete("type_id");
+      } else {
+        prev.set("type_id", typeId);
+      }
+      return prev;
+    });
   };
 
   if (loading) return <div>Loading...</div>;
@@ -119,25 +124,25 @@ export default function EventList() {
         <div className="events-layout">
           <div className="events-list">
             <div className="sort-controls">
+              <Button
+                variant={currentType === "all" ? "blue" : "default"}
+                onClick={() => {
+                  handleTypeFilter("all");
+                  handleShowAllEvents();
+                }}
+              >
+                All Events
+              </Button>
               {eventTypes.map((type) => (
-                <button
+                <Button
                   key={type.id}
-                  onClick={() =>
-                    setSearchParams({
-                      page: "1",
-                      sort: currentSort,
-                      order: currentOrder,
-                      ...(currentType !== type.id.toString() && {
-                        type_id: type.id,
-                      }),
-                    })
+                  variant={
+                    currentType === type.id.toString() ? "blue" : "default"
                   }
-                  className={`sort-btn ${
-                    currentType === type.id.toString() ? "active" : ""
-                  }`}
+                  onClick={() => handleTypeFilter(type.id.toString())}
                 >
                   {type.name}
-                </button>
+                </Button>
               ))}
               <button
                 onClick={() =>
@@ -174,11 +179,6 @@ export default function EventList() {
                 {currentSort === "title" &&
                   (currentOrder === "asc" ? "↑" : "↓")}
               </button>
-              {selectedDate && (
-                <button onClick={clearDateSelection} className="sort-btn">
-                  Show All Events
-                </button>
-              )}
             </div>
 
             {selectedDate
@@ -250,7 +250,11 @@ export default function EventList() {
             )}
           </div>
           <div className="calendar-section">
-            <EventCalendar events={allEvents} onDateSelect={handleDateSelect} />
+            <EventCalendar
+              events={allEvents}
+              onSelectDate={handleDateSelect}
+              selectedDate={selectedDate}
+            />
           </div>
         </div>
       </div>

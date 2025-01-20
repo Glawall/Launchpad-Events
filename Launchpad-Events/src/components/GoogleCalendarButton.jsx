@@ -1,14 +1,41 @@
-import { createGoogleCalendarUrl } from "../utils/calendar-utils";
+import { useState, useEffect } from "react";
+import { initGoogleApi, addEventToCalendar } from "../utils/google-calendar";
 
-export default function GoogleCalendarButton({ event, className = "" }) {
+export default function GoogleCalendarButton({ event }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    initGoogleApi().catch((err) => {
+      console.error("Failed to initialize Google API:", err);
+      setError("Failed to load Google Calendar");
+    });
+  }, []);
+
+  const handleAddToCalendar = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await addEventToCalendar(event);
+      setTimeout(() => {
+        setLoading(false);
+      }, 5000);
+      return;
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  if (error) return <div className="error">{error}</div>;
+
   return (
-    <a
-      href={createGoogleCalendarUrl(event)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`btn-calendar ${className}`}
+    <button
+      onClick={handleAddToCalendar}
+      disabled={loading}
+      className="btn-calendar"
     >
-      Add to Google Calendar
-    </a>
+      {loading ? "Adding to Calendar..." : "Add to Google Calendar"}
+    </button>
   );
 }

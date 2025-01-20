@@ -4,8 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import { useEventTypes } from "../hooks/api-hooks";
 import { getEventTypeColor } from "../utils/event-type-colors";
 
-export default function EventCalendar({ events, onDateSelect }) {
-  const [date, setDate] = useState(new Date());
+export default function EventCalendar({ events, onSelectDate, selectedDate }) {
   const [eventTypes, setEventTypes] = useState([]);
   const { getAllEventTypes } = useEventTypes();
 
@@ -30,40 +29,40 @@ export default function EventCalendar({ events, onDateSelect }) {
     return acc;
   }, {});
 
-  const tileContent = ({ date }) => {
-    const dateStr = date.toDateString();
-    const dayEvents = eventDates[dateStr] || [];
-    if (dayEvents.length === 0) return null;
+  const tileContent = ({ date, view }) => {
+    if (view === "month") {
+      const dateStr = date.toDateString();
+      const dayEvents = eventDates[dateStr] || [];
 
-    return (
-      <div className="calendar-events">
-        {dayEvents.map((event) => (
-          <div
-            key={event.id}
-            className="calendar-event-title"
-            style={{
-              backgroundColor: getEventTypeColor(event.event_type_name),
-            }}
-          >
-            {event.title}
-          </div>
-        ))}
-      </div>
-    );
+      return dayEvents.length > 0 ? (
+        <div className="calendar-events">
+          {dayEvents.map((event) => (
+            <div
+              key={event.id}
+              className="calendar-event-title"
+              style={{
+                backgroundColor: getEventTypeColor(event.event_type_name),
+              }}
+            >
+              {event.title}
+            </div>
+          ))}
+        </div>
+      ) : null;
+    }
   };
 
-  const handleDateChange = (value) => {
-    setDate(value);
-    const dateStr = value.toDateString();
+  const handleDateClick = (date) => {
+    const dateStr = date.toDateString();
     const dateEvents = eventDates[dateStr] || [];
-    onDateSelect(dateEvents);
+    onSelectDate(date, dateEvents);
   };
 
   return (
     <div className="calendar-wrapper">
       <Calendar
-        onChange={handleDateChange}
-        value={date}
+        onChange={handleDateClick}
+        value={selectedDate}
         tileContent={tileContent}
         tileClassName={({ date }) => {
           const dateStr = date.toDateString();
