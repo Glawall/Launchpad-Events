@@ -1,6 +1,6 @@
 import app from "./app";
 
-const { PORT = 8006 } = process.env;
+const { PORT = 8011 } = process.env;
 
 const startServer = async () => {
   try {
