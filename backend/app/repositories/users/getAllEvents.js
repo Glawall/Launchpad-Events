@@ -5,6 +5,7 @@ export const getAllEvents = async ({
   order = "asc",
   page = 1,
   limit = 10,
+  type_id,
 }) => {
   const offset = (page - 1) * limit;
   const validSortFields = ["date", "title", "capacity", "created_at"];
@@ -12,6 +13,14 @@ export const getAllEvents = async ({
 
   const sortField = validSortFields.includes(sort) ? sort : "date";
   const sortOrder = validOrders.includes(order.toLowerCase()) ? order : "asc";
+
+  let queryParams = [limit, offset];
+  let typeFilter = "";
+
+  if (type_id) {
+    typeFilter = "WHERE event_type_id = $3";
+    queryParams.push(type_id);
+  }
 
   const eventsQueryStr = `
     SELECT 
@@ -22,11 +31,12 @@ export const getAllEvents = async ({
     FROM events
     LEFT JOIN event_types ON events.event_type_id = event_types.id
     LEFT JOIN users ON events.creator_id = users.id
+    ${typeFilter}
     ORDER BY events.${sortField} ${sortOrder}
     LIMIT $1 OFFSET $2
   `;
 
-  const result = await db.query(eventsQueryStr, [limit, offset]);
+  const result = await db.query(eventsQueryStr, queryParams);
 
   const eventIds = result.rows.map((event) => event.id);
   const { rows: allAttendees } = await db.query(

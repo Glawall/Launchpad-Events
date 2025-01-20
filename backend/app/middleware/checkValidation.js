@@ -149,3 +149,11 @@ export const checkEventType = (eventTypeData) => {
 
   return eventTypeData;
 };
+
+export const checkEventTypeId = (typeId) => {
+  const parsedTypeId = parseInt(typeId);
+  if (isNaN(parsedTypeId) || parsedTypeId < 1) {
+    throw createValidationError("Invalid event type ID");
+  }
+  return parsedTypeId;
+};

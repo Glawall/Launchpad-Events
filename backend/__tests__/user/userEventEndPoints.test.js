@@ -254,6 +254,81 @@ describe("GET /api/events/:id", () => {
       expect(response.status).toBe(400);
       expect(response.body.message).toBe("Invalid sort field");
     });
+    test("200 - GET: Returns events filtered by type_id", async () => {
+      const response = await request(app)
+        .get("/api/events")
+        .query({ type_id: 1 });
+
+      expect(response.status).toBe(200);
+      expect(response.body.events).toBeInstanceOf(Array);
+      expect(response.body.events.length).toBeGreaterThan(0);
+
+      response.body.events.forEach((event) => {
+        expect(event.event_type_id).toBe(1);
+      });
+    });
+
+    test("200 - GET: Returns all events when no type_id is provided", async () => {
+      const responseWithType = await request(app)
+        .get("/api/events")
+        .query({ type_id: 1 });
+
+      const responseAllEvents = await request(app).get("/api/events");
+
+      expect(responseAllEvents.status).toBe(200);
+      expect(responseAllEvents.body.events.length).toBeGreaterThan(
+        responseWithType.body.events.length
+      );
+    });
+
+    test("200 - GET: Returns empty array when type_id has no events", async () => {
+      const response = await request(app)
+        .get("/api/events")
+        .query({ type_id: 999 });
+
+      expect(response.status).toBe(200);
+      expect(response.body.events).toHaveLength(0);
+      expect(response.body.pagination.totalCount).toBe(0);
+    });
+
+    test("200 - GET: Combines type filtering with pagination and sorting", async () => {
+      const response = await request(app).get("/api/events").query({
+        type_id: 1,
+        page: 1,
+        limit: 5,
+        sort: "date",
+        order: "asc",
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.events).toBeInstanceOf(Array);
+      expect(response.body.events.length).toBeLessThanOrEqual(5);
+
+      const dates = response.body.events.map((event) => new Date(event.date));
+      const sortedDates = [...dates].sort((a, b) => a - b);
+      expect(dates).toEqual(sortedDates);
+
+      response.body.events.forEach((event) => {
+        expect(event.event_type_id).toBe(1);
+      });
+
+      expect(response.body.pagination).toMatchObject({
+        currentPage: 1,
+        hasNextPage: expect.any(Boolean),
+        hasPreviousPage: false,
+        totalPages: expect.any(Number),
+        totalCount: expect.any(Number),
+      });
+    });
+
+    test("400 - GET: Returns error for invalid type_id format", async () => {
+      const response = await request(app)
+        .get("/api/events")
+        .query({ type_id: -1 });
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Invalid event type ID");
+    });
   });
 
   describe("DELETE /api/events/:eventId/users/:userId/attendees", () => {
