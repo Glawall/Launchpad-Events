@@ -120,7 +120,22 @@ export function useEvents() {
     }
   }, []);
 
-  return { getAllEvents, getEventById, createEvent, updateEvent };
+  const deleteEvent = useCallback(async (eventId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      await api.delete(`/api/admin/events/${eventId}`, {
+        headers: {
+          "user-role": user.role,
+          "user-id": user.id,
+        },
+      });
+      return true;
+    } catch (error) {
+      throw new Error(message);
+    }
+  }, []);
+
+  return { getAllEvents, getEventById, createEvent, updateEvent, deleteEvent };
 }
 
 export function useAttendees() {
@@ -166,31 +181,55 @@ export function useAttendees() {
 }
 
 export function useAdmin() {
+  const getUserById = useCallback(async (id) => {
+    const response = await api.get(`/api/users/${id}`);
+    return response.data;
+  }, []);
+
   const getAllUsers = useCallback(async () => {
-    const response = await api.get("/api/admin/users");
-    return response.data;
+    try {
+      const response = await api.get("/api/users");
+      return response.data;
+    } catch (error) {
+      throw new Error(message);
+    }
   }, []);
 
-  const updateEvent = useCallback(async (id, eventData) => {
-    const response = await api.put(`/api/admin/events/${id}`, eventData);
-    return response.data;
+  const updateUser = useCallback(async (userId, userData) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const response = await api.patch(`/api/admin/users/${userId}`, userData, {
+        headers: {
+          "user-role": user.role,
+          "user-id": user.id,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(message);
+    }
   }, []);
 
-  const deleteEvent = useCallback(async (id) => {
-    const response = await api.delete(`/api/admin/events/${id}`);
-    return response.data;
-  }, []);
-
-  const updateUser = useCallback(async (id, userData) => {
-    const response = await api.patch(`/api/admin/users/${id}`, userData);
-    return response.data;
+  const deleteUser = useCallback(async (userId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      await api.delete(`/api/users/${userId}`, {
+        headers: {
+          "user-role": user.role,
+          "user-id": user.id,
+        },
+      });
+      return true;
+    } catch (error) {
+      throw new Error(message);
+    }
   }, []);
 
   return {
+    getUserById,
     getAllUsers,
-    updateEvent,
-    deleteEvent,
     updateUser,
+    deleteUser,
   };
 }
 

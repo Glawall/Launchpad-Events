@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useEvents, useAdmin } from "../hooks/api-hooks";
+import { useEvents, useAdmin, useAttendees } from "../hooks/api-hooks";
 import { useState, useEffect } from "react";
 import { formatDate, formatTimeRange } from "../utils/date-utils";
 import useEventAttendance from "../hooks/useEventAttendance";
@@ -13,10 +13,8 @@ import ConfirmBox from "./common/ConfirmBox";
 export default function Event() {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const { user } = useAuth();
-  const { getEventById } = useEvents();
-  const { deleteEvent } = useAdmin();
+  const { user, isAdmin } = useAuth();
+  const { getEventById, deleteEvent } = useEvents();
   const [event, setEvent] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const { attending, loading, handleAttendance, removeAttendee } =
@@ -24,6 +22,7 @@ export default function Event() {
   const [showConfirmRemove, setShowConfirmRemove] = useState(false);
   const [attendeeToRemove, setAttendeeToRemove] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchEvent = async () => {
     try {
@@ -54,8 +53,8 @@ export default function Event() {
     try {
       await deleteEvent(event.id);
       navigate("/events");
-    } catch (error) {
-      console.error("Failed to delete event:", error);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -78,14 +77,19 @@ export default function Event() {
         <div className="event-details">
           <div className="event-header">
             <h1>{event.title}</h1>
-            <div className="admin-actions">
-              <Button variant="blue" onClick={() => setIsEditing(true)}>
-                Edit Event
-              </Button>
-              <Button variant="red" onClick={() => setShowConfirmDelete(true)}>
-                Delete Event
-              </Button>
-            </div>
+            {isAdmin && (
+              <div className="admin-actions">
+                <Button variant="blue" onClick={() => setIsEditing(true)}>
+                  Edit Event
+                </Button>
+                <Button
+                  variant="red"
+                  onClick={() => setShowConfirmDelete(true)}
+                >
+                  Delete Event
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="info-section">
@@ -150,28 +154,30 @@ export default function Event() {
             </div>
           )}
 
-          <div className="attendees-section">
-            <h3>Attendees ({event.attendees.length})</h3>
-            <ul className="attendees-list">
-              {event.attendees.map((attendee) => (
-                <li key={attendee.id} className="attendee-item">
-                  <span>{attendee.name}</span>
-                  {attendee.id !== user.id && (
-                    <div className="remove-attendee-wrapper">
-                      <span className="remove-text">Remove</span>
-                      <button
-                        onClick={() => handleRemoveAttendee(attendee.id)}
-                        className="remove-attendee"
-                        title="Remove attendee"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {isAdmin && (
+            <div className="attendees-section">
+              <h3>Attendees ({event.attendees.length})</h3>
+              <ul className="attendees-list">
+                {event.attendees.map((attendee) => (
+                  <li key={attendee.id} className="attendee-item">
+                    <span>{attendee.name}</span>
+                    {attendee.id !== user.id && (
+                      <div className="remove-attendee-wrapper">
+                        <span className="remove-text">Remove</span>
+                        <button
+                          onClick={() => handleRemoveAttendee(attendee.id)}
+                          className="remove-attendee"
+                          title="Remove attendee"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
       <ConfirmBox

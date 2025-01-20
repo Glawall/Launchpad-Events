@@ -75,14 +75,14 @@
 /* User Info */
 .user-info {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
 }
 
 .user-name {
-  font-size: 0.875rem;
-  font-weight: 500;
   color: #1e40af;
+  font-weight: 500;
 }
 
 /* Forms */
@@ -239,8 +239,7 @@ select.input {
   padding-right: 0.5rem;
 }
 
-.events-list,
-.calendar-section {
+.events-list {
   width: 100%;
   min-width: 0;
 }
@@ -469,15 +468,10 @@ select.input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0.75rem;
+  margin-bottom: 2rem;
 }
 
-.event-header h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
+.event-header h2 {
   margin: 0;
 }
 
@@ -596,14 +590,13 @@ select.input {
 /* Sort Controls */
 .sort-controls {
   display: flex;
-  gap: 1rem;
-  margin: -0.5rem 0 1.5rem;
-  justify-content: flex-start;
-  padding-left: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
 }
 
-.sort-btn,
-.type-filter {
+.sort-btn {
   padding: 0.75rem 1.25rem;
   border: 1px solid #e5e7eb;
   background: #f8fafc;
@@ -614,8 +607,7 @@ select.input {
   font-weight: 500;
 }
 
-.sort-btn:hover,
-.type-filter:hover {
+.sort-btn:hover {
   background: #f0f7ff;
   border-color: #93c5fd;
 }
@@ -776,7 +768,6 @@ select.input {
 .admin-actions {
   display: flex;
   gap: 1rem;
-  align-items: center;
 }
 
 .event-type-manager {
@@ -1113,4 +1104,118 @@ select.input {
   height: 2px;
   background: #1e40af;
   border-radius: 2px;
+}
+
+/* Manage Users Styles */
+.manage-users {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.search-box {
+  margin-bottom: 2rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-item {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1e40af;
+}
+
+.user-info p {
+  margin: 0.25rem 0;
+  color: #6b7280;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-top: 0.5rem;
+}
+
+.role-badge.admin {
+  background: #93c5fd;
+  color: #1e40af;
+}
+
+.role-badge.user {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.user-actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-left: 2rem;
+}
+
+.filter-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.select-input {
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: white;
+  min-width: 120px;
+}
+
+.user-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.user-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.user-name {
+  color: #1e40af;
+  font-weight: 500;
+}
+
+.user-actions-column {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
 }
