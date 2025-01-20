@@ -4,6 +4,8 @@ import { useEvents } from "../hooks/api-hooks";
 import EventCard from "./EventCard";
 import { useAuth } from "../context/AuthContext";
 import EventCalendar from "./EventCalendar";
+import EventTypeSelect from "./EventTypeSelect";
+import { useEventTypesContext } from "../context/EventTypesContext";
 
 export default function EventList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,10 +18,12 @@ export default function EventList() {
   const { isAdmin } = useAuth();
   const [selectedDate, setSelectedDate] = useState(null);
   const [allEvents, setAllEvents] = useState([]);
+  const { eventTypes } = useEventTypesContext();
 
   const currentPage = parseInt(searchParams.get("page") || "1");
   const currentSort = searchParams.get("sort") || "date";
   const currentOrder = searchParams.get("order") || "asc";
+  const currentType = searchParams.get("type_id");
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -30,6 +34,7 @@ export default function EventList() {
           limit: pageSize,
           sort: currentSort,
           order: currentOrder,
+          type_id: currentType,
         });
 
         const firstPage = await getAllEvents({
@@ -63,7 +68,14 @@ export default function EventList() {
     };
 
     fetchEvents();
-  }, [currentPage, currentSort, currentOrder, pageSize, getAllEvents]);
+  }, [
+    currentPage,
+    currentSort,
+    currentOrder,
+    currentType,
+    pageSize,
+    getAllEvents,
+  ]);
 
   const handleEventUpdate = (updatedEvent) => {
     setEventsList((currentEvents) =>
@@ -107,6 +119,26 @@ export default function EventList() {
         <div className="events-layout">
           <div className="events-list">
             <div className="sort-controls">
+              {eventTypes.map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() =>
+                    setSearchParams({
+                      page: "1",
+                      sort: currentSort,
+                      order: currentOrder,
+                      ...(currentType !== type.id.toString() && {
+                        type_id: type.id,
+                      }),
+                    })
+                  }
+                  className={`sort-btn ${
+                    currentType === type.id.toString() ? "active" : ""
+                  }`}
+                >
+                  {type.name}
+                </button>
+              ))}
               <button
                 onClick={() =>
                   setSearchParams({

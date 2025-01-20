@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Event from "./components/Event";
 import { EventTypesProvider } from "./context/EventTypesContext";
+import ManageUsers from "./components/ManageUsers";
 
 function App() {
   return (
@@ -66,6 +67,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <Event />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage-users"
+            element={
+              <ProtectedRoute adminOnly>
+                <ManageUsers />
               </ProtectedRoute>
             }
           />

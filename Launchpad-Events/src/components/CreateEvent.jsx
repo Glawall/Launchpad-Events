@@ -63,8 +63,8 @@ export default function CreateEvent() {
         event_type_id: parseInt(formData.event_type_id),
       };
 
-      await createEvent(eventData);
-      navigate("/events");
+      const newEvent = await createEvent(eventData);
+      navigate(`/events/${newEvent.id}`);
     } catch (err) {
       setError(err.message);
     } finally {
