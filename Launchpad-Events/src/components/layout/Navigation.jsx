@@ -47,9 +47,9 @@ export default function Navigation() {
           </div>
           <div className="nav-right">
             {user ? (
-              <div className="user-info">
+              <div className="user-menu">
                 <span className="user-name">{user.name}</span>
-                <div className="user-actions-column">
+                <div className="user-actions-stack">
                   <button onClick={logout} className="btn">
                     Logout
                   </button>
