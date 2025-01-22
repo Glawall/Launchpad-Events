@@ -56,15 +56,21 @@ export function useEvents() {
         });
         return response.data;
       } catch (error) {
-        throw new Error(message);
+        throw new Error(
+          error.response?.data?.message || "Failed to fetch events"
+        );
       }
     },
     []
   );
 
   const getEventById = useCallback(async (id) => {
-    const response = await api.get(`/api/events/${id}`);
-    return response.data;
+    try {
+      const response = await api.get(`/api/events/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to fetch event");
+    }
   }, []);
 
   const createEvent = useCallback(async (eventData) => {
@@ -92,7 +98,9 @@ export function useEvents() {
       });
       return response.data;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(
+        error.response?.data?.message || "Failed to create event"
+      );
     }
   }, []);
 
@@ -116,7 +124,9 @@ export function useEvents() {
       );
       return response.data;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(
+        error.response?.data?.message || "Failed to update event"
+      );
     }
   }, []);
 
@@ -131,7 +141,9 @@ export function useEvents() {
       });
       return true;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(
+        error.response?.data?.message || "Failed to delete event"
+      );
     }
   }, []);
 
@@ -158,7 +170,9 @@ export function useAttendees() {
       );
       return response.data;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(
+        error.response?.data?.message || "Failed to add attendee"
+      );
     }
   }, []);
 
@@ -173,7 +187,9 @@ export function useAttendees() {
       });
       return true;
     } catch (error) {
-      throw new Error("Failed to remove from event");
+      throw new Error(
+        error.response?.data?.message || "Failed to remove attendee"
+      );
     }
   }, []);
 
@@ -191,7 +207,7 @@ export function useAdmin() {
       const response = await api.get("/api/users");
       return response.data;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(error.response?.data?.message || "Failed to fetch users");
     }
   }, []);
 
@@ -206,7 +222,7 @@ export function useAdmin() {
       });
       return response.data;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(error.response?.data?.message || "Failed to update user");
     }
   }, []);
 
@@ -221,7 +237,7 @@ export function useAdmin() {
       });
       return true;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(error.response?.data?.message || "Failed to delete user");
     }
   }, []);
 
@@ -235,13 +251,21 @@ export function useAdmin() {
 
 export function useUser() {
   const getUserById = useCallback(async (id) => {
-    const response = await api.get(`/api/users/${id}`);
-    return response.data;
+    try {
+      const response = await api.get(`/api/users/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to fetch user");
+    }
   }, []);
 
   const deleteUser = useCallback(async (id) => {
-    const response = await api.delete(`/api/users/${id}`);
-    return response.data;
+    try {
+      const response = await api.delete(`/api/users/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to delete user");
+    }
   }, []);
 
   return { getUserById, deleteUser };
@@ -253,13 +277,21 @@ export function useEventTypes() {
       const response = await api.get("/api/event-types");
       return response.data;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch event types"
+      );
     }
   }, []);
 
   const getEventTypeById = useCallback(async (id) => {
-    const response = await api.get(`/api/event-types/${id}`);
-    return response.data;
+    try {
+      const response = await api.get(`/api/event-types/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch event type"
+      );
+    }
   }, []);
 
   const createEventType = useCallback(async (typeData) => {
@@ -274,7 +306,9 @@ export function useEventTypes() {
       });
       return response.data;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(
+        error.response?.data?.message || "Failed to create event type"
+      );
     }
   }, []);
 
@@ -290,7 +324,9 @@ export function useEventTypes() {
       });
       return true;
     } catch (error) {
-      throw new Error(message);
+      throw new Error(
+        error.response?.data?.message || "Failed to delete event type"
+      );
     }
   }, []);
 
