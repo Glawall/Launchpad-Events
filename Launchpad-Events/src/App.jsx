@@ -32,6 +32,16 @@ function AppContent() {
         {user && <Navigation />}
         <main className={user ? "container py-8" : ""}>
           <Routes>
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route
+              path="/login"
+              element={user ? <Navigate to="/events" replace /> : <Login />}
+            />
+            <Route
+              path="/signup"
+              element={user ? <Navigate to="/events" replace /> : <Signup />}
+            />
             <Route
               path="/"
               element={
@@ -41,14 +51,6 @@ function AppContent() {
                   <Navigate to="/login" replace />
                 )
               }
-            />
-            <Route
-              path="/login"
-              element={user ? <Navigate to="/events" replace /> : <Login />}
-            />
-            <Route
-              path="/signup"
-              element={user ? <Navigate to="/events" replace /> : <Signup />}
             />
             <Route
               path="/events"
@@ -82,8 +84,6 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

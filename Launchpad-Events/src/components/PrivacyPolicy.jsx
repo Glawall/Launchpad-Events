@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "./common/Button";
+import { useAuth } from "../context/AuthContext";
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="wrapper">
@@ -152,11 +154,13 @@ export default function PrivacyPolicy() {
           </p>
         </section>
 
-        <div className="btn-group">
-          <Button variant="blue" onClick={() => navigate("/login")}>
-            Return to Login
-          </Button>
-        </div>
+        {!user && (
+          <div className="btn-group">
+            <Button variant="blue" onClick={() => navigate("/login")}>
+              Return to Login
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
