@@ -8,6 +8,7 @@ export default function CreateEvent() {
   const { createEvent } = useEvents();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [dateError, setDateError] = useState("");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -22,25 +23,35 @@ export default function CreateEvent() {
     event_type_id: "1",
   });
 
+  const validateDates = (startDate, startTime, endDate, endTime) => {
+    const start = new Date(`${startDate}T${startTime}`);
+    const end = new Date(`${endDate}T${endTime}`);
+
+    if (end < start) {
+      return "End date and time must be after start date and time";
+    }
+    return "";
+  };
+
   const handleDateTimeChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prev) => {
       const newData = { ...prev, [name]: value };
 
       if (name === "date") {
         newData.end_date = value;
+        const error = validateDates(value, prev.time, value, prev.end_time);
+        setDateError(error);
       }
-      if (name === "time") {
-        const [hours, minutes] = value.split(":");
-        const newTime = new Date();
-        newTime.setHours(parseInt(hours) + 2);
-        newTime.setMinutes(parseInt(minutes));
 
-        newData.end_time = `${String(newTime.getHours()).padStart(
-          2,
-          "0"
-        )}:${String(newTime.getMinutes()).padStart(2, "0")}`;
+      if (name === "end_date" || name === "time" || name === "end_time") {
+        const error = validateDates(
+          prev.date,
+          name === "time" ? value : prev.time,
+          name === "end_date" ? value : prev.end_date,
+          name === "end_time" ? value : prev.end_time
+        );
+        setDateError(error);
       }
 
       return newData;
@@ -63,10 +74,15 @@ export default function CreateEvent() {
         event_type_id: parseInt(formData.event_type_id),
       };
 
-      const newEvent = await createEvent(eventData);
-      navigate(`/events/${newEvent.id}`);
+      const createdEvent = await createEvent(eventData);
+      if (createdEvent && createdEvent.id) {
+        navigate(`/events/${createdEvent.id}`);
+      } else {
+        throw new Error("Failed to get created event details");
+      }
     } catch (err) {
-      setError(err.message);
+      console.error("Create event error:", err);
+      setError(err.message || "Failed to create event");
     } finally {
       setLoading(false);
     }
@@ -74,7 +90,7 @@ export default function CreateEvent() {
 
   return (
     <div className="wrapper">
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleSubmit} className="form create-event-form">
         <h2 className="form-title">Create Event</h2>
 
         <div className="form-row">
@@ -139,12 +155,11 @@ export default function CreateEvent() {
             type="date"
             name="end_date"
             value={formData.end_date}
-            onChange={(e) =>
-              setFormData({ ...formData, end_date: e.target.value })
-            }
+            onChange={handleDateTimeChange}
             className="input"
             required
           />
+          {dateError && <div className="error-message">{dateError}</div>}
         </div>
 
         <div className="form-row">
@@ -153,13 +168,12 @@ export default function CreateEvent() {
             type="time"
             name="end_time"
             value={formData.end_time}
-            onChange={(e) =>
-              setFormData({ ...formData, end_time: e.target.value })
-            }
+            onChange={handleDateTimeChange}
             className="input"
             required
             step="900"
           />
+          {dateError && <div className="error-message">{dateError}</div>}
         </div>
 
         <div className="form-row">

@@ -20,49 +20,43 @@ export default function Navigation() {
 
   return (
     <nav className="nav">
-      <div className="container">
-        <div className="nav-content">
-          <div className="nav-left"></div>
-          <div className="nav-center">
-            <div className="nav-header">
-              <Link to="/" className="brand">
-                Events Hub
-              </Link>
-            </div>
-            <div className="nav-links">
-              <Link to="/events" className="nav-item">
-                Events
-              </Link>
-              {isAdmin && (
-                <>
-                  <Link to="/events/create" className="nav-item">
-                    Create Event
-                  </Link>
-                  <Link to="/manage-users" className="nav-item">
-                    Manage Users
-                  </Link>
-                </>
-              )}
-            </div>
+      <div className="nav-content">
+        <div className="nav-center">Events Hub</div>
+
+        <div className="nav-row">
+          <div className="nav-links">
+            <Link to="/events" className="nav-item">
+              Events
+            </Link>
+            {isAdmin && (
+              <>
+                <Link to="/events/create" className="nav-item">
+                  Create Event
+                </Link>
+                <Link to="/manage-users" className="nav-item">
+                  Manage Users
+                </Link>
+              </>
+            )}
           </div>
+
           <div className="nav-right">
             {user ? (
-              <div className="user-menu">
+              <>
                 <span className="user-name">{user.name}</span>
-                <div className="user-actions-stack">
-                  <button onClick={logout} className="btn">
-                    Logout
-                  </button>
-                  <button
-                    onClick={() => setShowConfirmDelete(true)}
-                    className="btn-red"
-                  >
-                    Delete Account
-                  </button>
-                </div>
-              </div>
+                <button onClick={logout} className="btn">
+                  Logout
+                </button>
+                <button
+                  onClick={() => setShowConfirmDelete(true)}
+                  className="btn-red"
+                  style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+                >
+                  Delete Account
+                </button>
+              </>
             ) : (
-              <Link to="/login" className="btn-blue">
+              <Link to="/login" className="btn">
                 Login
               </Link>
             )}

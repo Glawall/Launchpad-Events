@@ -119,143 +119,139 @@ export default function EventList() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="wrapper">
-      <div className="container">
-        <div className="events-layout">
-          <div className="events-list">
-            <div className="sort-controls">
-              <Button
-                variant={currentType === "all" ? "blue" : "default"}
-                onClick={() => {
-                  handleTypeFilter("all");
-                  handleShowAllEvents();
-                }}
-              >
-                All Events
-              </Button>
-              {eventTypes.map((type) => (
-                <Button
-                  key={type.id}
-                  variant={
-                    currentType === type.id.toString() ? "blue" : "default"
-                  }
-                  onClick={() => handleTypeFilter(type.id.toString())}
-                >
-                  {type.name}
-                </Button>
-              ))}
-              <button
-                onClick={() =>
-                  setSearchParams({
-                    page: "1",
-                    sort: "date",
-                    order:
-                      currentSort === "date" && currentOrder === "asc"
-                        ? "desc"
-                        : "asc",
-                  })
-                }
-                className={`sort-btn ${currentSort === "date" ? "active" : ""}`}
-              >
-                Date{" "}
-                {currentSort === "date" && (currentOrder === "asc" ? "↑" : "↓")}
-              </button>
-              <button
-                onClick={() =>
-                  setSearchParams({
-                    page: "1",
-                    sort: "title",
-                    order:
-                      currentSort === "title" && currentOrder === "asc"
-                        ? "desc"
-                        : "asc",
-                  })
-                }
-                className={`sort-btn ${
-                  currentSort === "title" ? "active" : ""
-                }`}
-              >
-                Title{" "}
-                {currentSort === "title" &&
-                  (currentOrder === "asc" ? "↑" : "↓")}
-              </button>
-            </div>
+    <div className="events-layout">
+      <div className="events-list">
+        <div className="filter-controls">
+          <Button
+            variant={currentType === "all" ? "blue" : "default"}
+            onClick={() => {
+              handleTypeFilter("all");
+              handleShowAllEvents();
+            }}
+          >
+            All Events
+          </Button>
+          {eventTypes.map((type) => (
+            <Button
+              key={type.id}
+              variant={currentType === type.id.toString() ? "blue" : "default"}
+              onClick={() => handleTypeFilter(type.id.toString())}
+            >
+              {type.name}
+            </Button>
+          ))}
+        </div>
 
-            {selectedDate
-              ? eventsList
-                  .filter(
-                    (event) =>
-                      new Date(event.date).toDateString() ===
-                      selectedDate.toDateString()
-                  )
-                  .map((event) => (
-                    <div
-                      key={event.id}
-                      id={`event-${event.id}`}
-                      className="event-wrapper highlighted"
-                    >
-                      <EventCard
-                        event={event}
-                        onEventUpdate={handleEventUpdate}
-                        isAdmin={isAdmin}
-                      />
-                    </div>
-                  ))
-              : eventsList.map((event) => (
-                  <div
-                    key={event.id}
-                    id={`event-${event.id}`}
-                    className="event-wrapper"
-                  >
-                    <EventCard
-                      event={event}
-                      onEventUpdate={handleEventUpdate}
-                      isAdmin={isAdmin}
-                    />
-                  </div>
-                ))}
-
-            {!selectedDate && (
-              <div className="pagination">
-                <button
-                  onClick={() =>
-                    setSearchParams({
-                      page: (currentPage - 1).toString(),
-                      sort: currentSort,
-                      order: currentOrder,
-                    })
-                  }
-                  disabled={currentPage === 1}
-                  className="page-btn"
+        {selectedDate
+          ? eventsList
+              .filter(
+                (event) =>
+                  new Date(event.date).toDateString() ===
+                  selectedDate.toDateString()
+              )
+              .map((event) => (
+                <div
+                  key={event.id}
+                  id={`event-${event.id}`}
+                  className="event-wrapper highlighted"
                 >
-                  Previous
-                </button>
-                <span className="page-info">
-                  Page {currentPage} of {pagination.totalPages}
-                </span>
-                <button
-                  onClick={() =>
-                    setSearchParams({
-                      page: (currentPage + 1).toString(),
-                      sort: currentSort,
-                      order: currentOrder,
-                    })
-                  }
-                  disabled={!pagination.hasNextPage}
-                  className="page-btn"
-                >
-                  Next
-                </button>
+                  <EventCard
+                    event={event}
+                    onEventUpdate={handleEventUpdate}
+                    isAdmin={isAdmin}
+                  />
+                </div>
+              ))
+          : eventsList.map((event) => (
+              <div
+                key={event.id}
+                id={`event-${event.id}`}
+                className="event-wrapper"
+              >
+                <EventCard
+                  event={event}
+                  onEventUpdate={handleEventUpdate}
+                  isAdmin={isAdmin}
+                />
               </div>
-            )}
+            ))}
+
+        {!selectedDate && (
+          <div className="pagination">
+            <button
+              onClick={() =>
+                setSearchParams({
+                  page: (currentPage - 1).toString(),
+                  sort: currentSort,
+                  order: currentOrder,
+                })
+              }
+              disabled={currentPage === 1}
+              className="page-btn"
+            >
+              Previous
+            </button>
+            <span className="page-info">
+              Page {currentPage} of {pagination.totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setSearchParams({
+                  page: (currentPage + 1).toString(),
+                  sort: currentSort,
+                  order: currentOrder,
+                })
+              }
+              disabled={!pagination.hasNextPage}
+              className="page-btn"
+            >
+              Next
+            </button>
           </div>
-          <div className="calendar-section">
-            <EventCalendar
-              events={allEvents}
-              onSelectDate={handleDateSelect}
-              selectedDate={selectedDate}
-            />
-          </div>
+        )}
+      </div>
+
+      <div className="calendar-section">
+        <div className="sort-controls">
+          <button
+            onClick={() =>
+              setSearchParams({
+                page: "1",
+                sort: "date",
+                order:
+                  currentSort === "date" && currentOrder === "asc"
+                    ? "desc"
+                    : "asc",
+              })
+            }
+            className={`sort-btn ${currentSort === "date" ? "active" : ""}`}
+          >
+            Date{" "}
+            {currentSort === "date" && (currentOrder === "asc" ? "↑" : "↓")}
+          </button>
+          <button
+            onClick={() =>
+              setSearchParams({
+                page: "1",
+                sort: "title",
+                order:
+                  currentSort === "title" && currentOrder === "asc"
+                    ? "desc"
+                    : "asc",
+              })
+            }
+            className={`sort-btn ${currentSort === "title" ? "active" : ""}`}
+          >
+            Title{" "}
+            {currentSort === "title" && (currentOrder === "asc" ? "↑" : "↓")}
+          </button>
+        </div>
+        <div className="calendar-wrapper">
+          <EventCalendar
+            events={allEvents}
+            onSelectDate={handleDateSelect}
+            selectedDate={selectedDate}
+          />
         </div>
       </div>
     </div>

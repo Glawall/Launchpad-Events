@@ -26,8 +26,8 @@ const Login = () => {
   };
 
   return (
-    <div className="wrapper">
-      <form onSubmit={handleSubmit} className="form">
+    <div className="login-wrapper">
+      <form onSubmit={handleSubmit} className="form login-form">
         <h2 className="form-title">Login</h2>
 
         <div className="form-row">
@@ -75,6 +75,15 @@ const Login = () => {
               Sign up
             </Link>
           </p>
+          <div className="legal-links">
+            <Link to="/privacy-policy" className="link">
+              Privacy Policy
+            </Link>
+            <span className="separator">•</span>
+            <Link to="/terms-of-service" className="link">
+              Terms of Service
+            </Link>
+          </div>
         </div>
       </form>
     </div>

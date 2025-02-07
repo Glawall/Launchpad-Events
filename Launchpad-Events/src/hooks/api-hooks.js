@@ -1,6 +1,8 @@
 import { useCallback } from "react";
 import api from "../utils/api-client";
 
+const USER_STORAGE_KEY = "launchpad_events_user";
+
 export function useAuth() {
   const validateCredentials = useCallback(async (credentials) => {
     try {
@@ -74,30 +76,31 @@ export function useEvents() {
   }, []);
 
   const createEvent = useCallback(async (eventData) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    const eventInformation = {
-      title: eventData.title,
-      description: eventData.description,
-      date: eventData.date,
-      end_date: eventData.end_date,
-      location_name: eventData.location_name,
-      location_address: eventData.location_address,
-      capacity: parseInt(eventData.capacity),
-      creator_id: parseInt(user.id),
-      event_type_id: 1,
-    };
+    const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
 
     try {
-      const response = await api.post("/api/admin/events", eventInformation, {
-        headers: {
-          "user-role": "admin",
-          "user-id": user.id,
-          "Content-Type": "application/json",
+      const response = await api.post(
+        "/api/admin/events",
+        {
+          ...eventData,
+          creator_id: parseInt(user.id),
         },
-      });
+        {
+          headers: {
+            "user-role": "admin",
+            "user-id": user.id,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.data || !response.data.id) {
+        throw new Error("Invalid response from server");
+      }
+
       return response.data;
     } catch (error) {
+      console.error("API create event error:", error);
       throw new Error(
         error.response?.data?.message || "Failed to create event"
       );
@@ -105,7 +108,7 @@ export function useEvents() {
   }, []);
 
   const updateEvent = useCallback(async (id, eventData) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
     try {
       const eventWithCreator = {
         ...eventData,
@@ -132,7 +135,7 @@ export function useEvents() {
 
   const deleteEvent = useCallback(async (eventId) => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
       await api.delete(`/api/admin/events/${eventId}`, {
         headers: {
           "user-role": user.role,
@@ -152,7 +155,7 @@ export function useEvents() {
 
 export function useAttendees() {
   const addAttendee = useCallback(async (eventId, userId) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
     if (!user || !user.role || !user.id) {
       throw new Error("User information is missing");
     }
@@ -177,7 +180,7 @@ export function useAttendees() {
   }, []);
 
   const deleteAttendee = useCallback(async (eventId, userId) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
     try {
       await api.delete(`/api/events/${eventId}/users/${userId}/attendees`, {
         headers: {
@@ -213,7 +216,7 @@ export function useAdmin() {
 
   const updateUser = useCallback(async (userId, userData) => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
       const response = await api.patch(`/api/admin/users/${userId}`, userData, {
         headers: {
           "user-role": user.role,
@@ -228,7 +231,7 @@ export function useAdmin() {
 
   const deleteUser = useCallback(async (userId) => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
       await api.delete(`/api/users/${userId}`, {
         headers: {
           "user-role": user.role,
@@ -295,7 +298,7 @@ export function useEventTypes() {
   }, []);
 
   const createEventType = useCallback(async (typeData) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
     try {
       const response = await api.post("/api/admin/event-types", typeData, {
         headers: {
@@ -313,7 +316,7 @@ export function useEventTypes() {
   }, []);
 
   const deleteEventType = useCallback(async (typeId) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "{}");
     try {
       const response = await api.delete(`/api/admin/event-types/${typeId}`, {
         headers: {

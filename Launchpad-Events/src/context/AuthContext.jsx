@@ -1,40 +1,44 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 import { useAuth as useAuthHook } from "../hooks/api-hooks";
 import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
+const USER_STORAGE_KEY = "launchpad_events_user";
+
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+    return storedUser ? JSON.parse(storedUser) : null;
   });
   const { validateCredentials } = useAuthHook();
 
-  const login = async (email, password) => {
-    try {
-      const response = await validateCredentials({ email, password });
-      const decodedToken = jwtDecode(response);
-      const userData = {
-        token: response,
-        email: decodedToken.email,
-        role: decodedToken.role,
-        id: decodedToken.id,
-        name: decodedToken.name,
-      };
-      setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData));
-      return userData;
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
-    }
-  };
+  const login = useCallback(
+    async (email, password) => {
+      try {
+        const response = await validateCredentials({ email, password });
+        const decodedToken = jwtDecode(response);
+        const userData = {
+          token: response,
+          email: decodedToken.email,
+          role: decodedToken.role,
+          id: decodedToken.id,
+          name: decodedToken.name,
+        };
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+        setUser(userData);
+        return userData;
+      } catch (error) {
+        throw error;
+      }
+    },
+    [validateCredentials]
+  );
 
-  const logout = () => {
+  const logout = useCallback(() => {
+    localStorage.removeItem(USER_STORAGE_KEY);
     setUser(null);
-    localStorage.removeItem("user");
-  };
+  }, []);
 
   const isAdmin = user?.role === "admin";
 
@@ -47,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
