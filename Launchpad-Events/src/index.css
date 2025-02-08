@@ -1567,3 +1567,45 @@ body {
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
+
+.home-content {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 2rem;
+  text-align: center;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.home-content h1 {
+  color: #1e40af;
+  margin-bottom: 2rem;
+}
+
+.home-content p {
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.home-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.home-links {
+  margin-top: 2rem;
+  color: #6b7280;
+}
+
+.home-links a {
+  color: #1e40af;
+  text-decoration: none;
+}
+
+.home-links a:hover {
+  text-decoration: underline;
+}

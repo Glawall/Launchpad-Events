@@ -12,6 +12,7 @@ import ManageUsers from "./components/ManageUsers";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import Footer from "./components/Footer";
 import TermsOfService from "./components/TermsOfService";
+import Home from "./components/Home";
 
 function App() {
   return (
@@ -44,13 +45,7 @@ function AppContent() {
             />
             <Route
               path="/"
-              element={
-                user ? (
-                  <Navigate to="/events" replace />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
+              element={user ? <Navigate to="/events" replace /> : <Home />}
             />
             <Route
               path="/events"
