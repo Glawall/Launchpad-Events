@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    base: mode === "production" ? "/Launchpad-Events/" : "/",
+    base: "/",
     build: {
       outDir: "dist",
     },
