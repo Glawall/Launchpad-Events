@@ -10,7 +10,7 @@
     "deploy": "gh-pages -d dist",
     "preview": "vite preview --host"
   },
-  "homepage": "https://glawall.github.io/Launchpad-Events",
+  "homepage": "https://theeventhivecouk.co.uk/",
   "dependencies": {
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
