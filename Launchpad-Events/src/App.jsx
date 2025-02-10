@@ -42,10 +42,11 @@ function AppContent() {
     <div className="app">
       <div className="content">
         {user && <Navigation />}
-        <main className={user ? "container py-8" : ""}>
+        <main className="main-content">
           <Routes>
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/" element={<Home />} />
             <Route
               path="/login"
               element={user ? <Navigate to="/events" replace /> : <Login />}
@@ -53,10 +54,6 @@ function AppContent() {
             <Route
               path="/signup"
               element={user ? <Navigate to="/events" replace /> : <Signup />}
-            />
-            <Route
-              path="/"
-              element={user ? <Navigate to="/events" replace /> : <Home />}
             />
             <Route
               path="/events"

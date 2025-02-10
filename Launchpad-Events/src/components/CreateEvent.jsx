@@ -8,6 +8,7 @@ export default function CreateEvent() {
   const { createEvent } = useEvents();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const [dateError, setDateError] = useState("");
 
   const [formData, setFormData] = useState({
@@ -26,6 +27,11 @@ export default function CreateEvent() {
   const validateDates = (startDate, startTime, endDate, endTime) => {
     const start = new Date(`${startDate}T${startTime}`);
     const end = new Date(`${endDate}T${endTime}`);
+    const now = new Date();
+
+    if (start < now) {
+      return "Event start date and time must be in the future";
+    }
 
     if (end < start) {
       return "End date and time must be after start date and time";
@@ -70,19 +76,16 @@ export default function CreateEvent() {
         end_date: new Date(
           `${formData.end_date}T${formData.end_time}`
         ).toISOString(),
-        capacity: parseInt(formData.capacity),
-        event_type_id: parseInt(formData.event_type_id),
+        event_type_id: parseInt(formData.event_type_id, 10),
       };
 
       const createdEvent = await createEvent(eventData);
-      if (createdEvent && createdEvent.id) {
+      setSuccess(true);
+      setTimeout(() => {
         navigate(`/events/${createdEvent.id}`);
-      } else {
-        throw new Error("Failed to get created event details");
-      }
+      }, 1500);
     } catch (err) {
-      console.error("Create event error:", err);
-      setError(err.message || "Failed to create event");
+      setError(err.response?.data?.message || "Failed to create event");
     } finally {
       setLoading(false);
     }
@@ -223,9 +226,13 @@ export default function CreateEvent() {
             <input
               type="number"
               name="capacity"
+              min="1"
               value={formData.capacity}
               onChange={(e) =>
-                setFormData({ ...formData, capacity: e.target.value })
+                setFormData({
+                  ...formData,
+                  capacity: parseInt(e.target.value, 10) || "",
+                })
               }
               className="input"
               required
@@ -242,6 +249,12 @@ export default function CreateEvent() {
         {error && (
           <div className="error-box">
             <p className="error-text">{error}</p>
+          </div>
+        )}
+
+        {success && (
+          <div className="success-box">
+            <p className="success-text">Event created successfully!</p>
           </div>
         )}
       </form>

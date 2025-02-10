@@ -21,10 +21,13 @@ export default function Navigation() {
   return (
     <nav className="nav">
       <div className="nav-content">
-        <div className="nav-center">Events Hub</div>
+        <div className="nav-center">The Events Hive</div>
 
         <div className="nav-row">
           <div className="nav-links">
+            <Link to="/" className="nav-item">
+              Home
+            </Link>
             <Link to="/events" className="nav-item">
               Events
             </Link>
