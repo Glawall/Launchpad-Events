@@ -10,7 +10,9 @@ export function createGoogleCalendarUrl(event) {
     dates: `${startDate.toISOString().replace(/-|:|\.\d+/g, "")}/${endDate
       .toISOString()
       .replace(/-|:|\.\d+/g, "")}`,
+    sf: true,
+    output: "xml",
   });
 
-  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  return `https://calendar.google.com/calendar/event?${params.toString()}`;
 }
