@@ -34,6 +34,7 @@ export const addEventToCalendar = async (event) => {
     }
   });
 
+  // Create the event data
   const calendarEvent = {
     summary: event.title,
     description: event.description,
@@ -48,8 +49,22 @@ export const addEventToCalendar = async (event) => {
     },
   };
 
-  await gapi.client.calendar.events.insert({
-    calendarId: "primary",
-    resource: calendarEvent,
+  // Instead of directly inserting, get the URL to open the event in Google Calendar
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: calendarEvent.summary,
+    details: calendarEvent.description,
+    location: calendarEvent.location,
+    dates: `${calendarEvent.start.dateTime.replace(
+      /[-:]/g,
+      ""
+    )}/${calendarEvent.end.dateTime.replace(/[-:]/g, "")}`,
+    authuser: 0,
   });
+
+  // Open Google Calendar in a new tab
+  window.open(
+    `https://calendar.google.com/calendar/render?${params.toString()}`,
+    "_blank"
+  );
 };
