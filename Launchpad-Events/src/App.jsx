@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useAuth, AuthProvider } from "./context/AuthContext";
 import Navigation from "./components/layout/Navigation";
 import EventList from "./components/EventList";
@@ -13,6 +13,7 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import Footer from "./components/Footer";
 import TermsOfService from "./components/TermsOfService";
 import Home from "./components/Home";
+import { useEffect } from "react";
 
 function App() {
   return (
@@ -26,6 +27,16 @@ function App() {
 
 function AppContent() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirectPath = params.get("redirect");
+
+    if (redirectPath) {
+      navigate(redirectPath, { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <div className="app">
