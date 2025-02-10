@@ -12,7 +12,10 @@ export function createGoogleCalendarUrl(event) {
       .replace(/-|:|\.\d+/g, "")}`,
     sf: true,
     output: "xml",
+    authuser: 0,
+    pli: 1,
+    usp: "sharing",
   });
 
-  return `https://calendar.google.com/calendar/event?${params.toString()}`;
+  return `https://calendar.google.com/calendar/u/0/r/eventedit?${params.toString()}`;
 }
