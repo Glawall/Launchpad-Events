@@ -7,7 +7,6 @@ import Button from "./common/Button";
 import InfoGroup from "./common/InfoGroup";
 import { useState } from "react";
 import ConfirmBox from "./common/ConfirmBox";
-import { createGoogleCalendarUrl } from "../utils/calendar-utils";
 
 export default function EventCard({ event, onEventUpdate }) {
   const { user } = useAuth();
@@ -16,11 +15,6 @@ export default function EventCard({ event, onEventUpdate }) {
     onEventUpdate
   );
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
-
-  const handleAddToCalendar = (event) => {
-    const calendarUrl = createGoogleCalendarUrl(event);
-    window.open(calendarUrl, "_blank");
-  };
 
   return (
     <>

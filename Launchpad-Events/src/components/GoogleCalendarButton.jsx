@@ -6,10 +6,12 @@ export default function GoogleCalendarButton({ event }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    initGoogleApi().catch((err) => {
-      console.error("Failed to initialize Google API:", err);
-      setError("Failed to load Google Calendar");
-    });
+    initGoogleApi("https://www.googleapis.com/auth/calendar.events").catch(
+      (err) => {
+        console.error("Failed to initialize Google API:", err);
+        setError("Failed to load Google Calendar");
+      }
+    );
   }, []);
 
   const handleAddToCalendar = async () => {
@@ -19,7 +21,7 @@ export default function GoogleCalendarButton({ event }) {
       await addEventToCalendar(event);
       setTimeout(() => {
         setLoading(false);
-      }, 5000);
+      }, 1000);
       return;
     } catch (err) {
       setError(err.message);
