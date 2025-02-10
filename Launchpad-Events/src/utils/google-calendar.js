@@ -18,10 +18,12 @@ export const initGoogleApi = async () => {
     client_id: GOOGLE_CLIENT_ID,
     scope: SCOPES,
     prompt: "consent",
+    include_granted_scopes: false,
   });
 };
 
 export const addEventToCalendar = async (event) => {
+  // Keep the OAuth flow for authentication
   await new Promise((resolve, reject) => {
     try {
       tokenClient.callback = async (resp) => {
@@ -34,37 +36,21 @@ export const addEventToCalendar = async (event) => {
     }
   });
 
-  // Create the event data
-  const calendarEvent = {
-    summary: event.title,
-    description: event.description,
-    location: `${event.location_name} - ${event.location_address}`,
-    start: {
-      dateTime: new Date(event.date).toISOString(),
-      timeZone: "Europe/London",
-    },
-    end: {
-      dateTime: new Date(event.end_date).toISOString(),
-      timeZone: "Europe/London",
-    },
-  };
-
-  // Instead of directly inserting, get the URL to open the event in Google Calendar
+  // Instead of inserting directly, open the calendar UI
   const params = new URLSearchParams({
     action: "TEMPLATE",
-    text: calendarEvent.summary,
-    details: calendarEvent.description,
-    location: calendarEvent.location,
-    dates: `${calendarEvent.start.dateTime.replace(
-      /[-:]/g,
-      ""
-    )}/${calendarEvent.end.dateTime.replace(/[-:]/g, "")}`,
-    authuser: 0,
+    text: event.title,
+    details: event.description,
+    location: `${event.location_name} - ${event.location_address}`,
+    dates: `${new Date(event.date)
+      .toISOString()
+      .replace(/[-:.]/g, "")}/${new Date(event.end_date)
+      .toISOString()
+      .replace(/[-:.]/g, "")}`,
   });
 
-  // Open Google Calendar in a new tab
   window.open(
-    `https://calendar.google.com/calendar/render?${params.toString()}`,
+    `https://calendar.google.com/calendar/event?${params.toString()}`,
     "_blank"
   );
 };
