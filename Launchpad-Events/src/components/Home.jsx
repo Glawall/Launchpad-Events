@@ -28,17 +28,21 @@ export default function Home() {
         {!user && (
           <>
             <div className="home-actions">
-              <Link to="/login" className="btn-blue">
+              <Link to="/login" className="btn-default">
                 Log In
               </Link>
-              <Link to="/signup" className="btn">
+              <Link to="/signup" className="btn-default">
                 Sign Up
               </Link>
             </div>
             <div className="home-links">
-              <Link to="/privacy-policy">Privacy Policy</Link>
+              <Link to="/privacy-policy" className="btn-link">
+                Privacy Policy
+              </Link>
               {" | "}
-              <Link to="/terms-of-service">Terms of Service</Link>
+              <Link to="/terms-of-service" className="btn-link">
+                Terms of Service
+              </Link>
             </div>
           </>
         )}
