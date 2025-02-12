@@ -11,11 +11,12 @@ export default function EventList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [events, setEvents] = useState([]);
   const [calendarEvents, setCalendarEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({});
   const [pageSize] = useState(10);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [allLocalEvents, setAllLocalEvents] = useState([]);
 
   const { getAllEvents } = useEvents();
   const { isAdmin } = useAuth();
@@ -28,49 +29,40 @@ export default function EventList() {
   const currentType = searchParams.get("type_id");
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
+    const fetchAllEvents = async () => {
+      setIsLoadingEvents(true);
       try {
-        const data = await getAllEvents({
-          page: currentPage,
-          limit: pageSize,
-          type_id: currentType !== "all" ? currentType : undefined,
-        });
-        setEvents(data.events);
-        setPagination(data.pagination);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+        const data = await getAllEvents({ limit: 100, page: 1 });
+        let allEvents = [...data.events];
 
-    fetchEvents();
-  }, [currentPage, pageSize, currentType]);
-
-  useEffect(() => {
-    const fetchCalendarEvents = async () => {
-      try {
-        const allData = await getAllEvents({ limit: 100, page: 1 });
-        if (allData.pagination.totalPages > 1) {
+        if (data.pagination.totalPages > 1) {
           const additionalPromises = Array.from(
-            { length: allData.pagination.totalPages - 1 },
+            { length: data.pagination.totalPages - 1 },
             (_, i) => getAllEvents({ limit: 100, page: i + 2 })
           );
           const additionalData = await Promise.all(additionalPromises);
-          setCalendarEvents([
-            ...allData.events,
+          allEvents = [
+            ...allEvents,
             ...additionalData.flatMap((data) => data.events),
-          ]);
-        } else {
-          setCalendarEvents(allData.events);
+          ];
         }
+        setAllLocalEvents(allEvents);
+        setCalendarEvents(allEvents);
+        setEvents(allEvents.slice(0, pageSize));
+        setPagination({
+          currentPage: 1,
+          totalPages: Math.ceil(allEvents.length / pageSize),
+          totalItems: allEvents.length,
+        });
       } catch (err) {
-        console.error("Failed to fetch calendar events:", err);
+        console.error("Failed to fetch all events:", err);
+        setError(err.message);
+      } finally {
+        setIsLoadingEvents(false);
       }
     };
 
-    fetchCalendarEvents();
+    fetchAllEvents();
   }, []);
 
   const displayedEvents = useMemo(() => {
@@ -89,8 +81,40 @@ export default function EventList() {
     });
   }, [events, currentSort, currentOrder]);
 
+  const handleFilterChange = (type) => {
+    setSearchParams((prev) => {
+      type === "all" ? prev.delete("type_id") : prev.set("type_id", type);
+      prev.set("page", "1");
+      return prev;
+    });
+
+    if (type === "all") {
+      setEvents(allLocalEvents.slice(0, pageSize));
+      setCalendarEvents(allLocalEvents);
+      setPagination({
+        currentPage: 1,
+        totalPages: Math.ceil(allLocalEvents.length / pageSize),
+        totalItems: allLocalEvents.length,
+      });
+    } else {
+      const filtered = allLocalEvents.filter(
+        (event) => event.event_type_id.toString() === type
+      );
+      setEvents(filtered.slice(0, pageSize));
+      setCalendarEvents(filtered);
+      setPagination({
+        currentPage: 1,
+        totalPages: Math.ceil(filtered.length / pageSize),
+        totalItems: filtered.length,
+      });
+    }
+  };
+
   const handleEventUpdate = (updatedEvent) => {
     setEvents((prev) =>
+      prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
+    );
+    setAllLocalEvents((prev) =>
       prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
     );
     setCalendarEvents((prev) =>
@@ -103,14 +127,6 @@ export default function EventList() {
       navigate(`/events/${events[0].id}`);
     }
     setSelectedDate(date);
-  };
-
-  const handleFilterChange = (type) => {
-    setSearchParams((prev) => {
-      type === "all" ? prev.delete("type_id") : prev.set("type_id", type);
-      prev.set("page", "1");
-      return prev;
-    });
   };
 
   const handleSort = (sortField) => {
@@ -130,7 +146,7 @@ export default function EventList() {
     setCalendarEvents((prev) => prev.filter((event) => event.id !== eventId));
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (isLoadingEvents) return <div>Loading events...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
