@@ -14,7 +14,7 @@ export default function TermsOfService() {
         <p className="last-updated">Effective Date: 5th February 2025</p>
 
         <p>
-          Welcome to Launchpad Events! By accessing or using our service (the
+          Welcome to The Events Hive! By accessing or using our service (the
           "Service"), you agree to comply with and be bound by the following
           Terms of Service ("Terms"). If you do not agree to these Terms, you
           must not use the Service.
@@ -23,7 +23,7 @@ export default function TermsOfService() {
         <section>
           <h2>1. Service Overview</h2>
           <p>
-            Launchpad Events is a platform where admin users can create, manage,
+            The Events Hive is a platform where admin users can create, manage,
             and delete events. Registered users can log in to the platform to
             view events and, after confirming their registration, add events to
             their Google Calendar using a provided link.

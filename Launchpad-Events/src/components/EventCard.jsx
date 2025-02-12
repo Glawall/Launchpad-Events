@@ -19,7 +19,9 @@ export default function EventCard({ event, onEventUpdate }) {
   return (
     <>
       <div className="card">
-        <h3 className="card-title">{event.title}</h3>
+        <Link to={`/events/${event.id}`} className="card-title">
+          {event.title}
+        </Link>
         <div className="card-info">
           <InfoGroup label="Location">
             <p>{event.location_name}</p>
@@ -51,7 +53,7 @@ export default function EventCard({ event, onEventUpdate }) {
                   </Button>
                 ) : (
                   <Button
-                    variant="blue"
+                    variant="btn"
                     onClick={handleAttendance}
                     disabled={
                       loading ||

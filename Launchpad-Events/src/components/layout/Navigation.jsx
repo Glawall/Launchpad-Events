@@ -3,11 +3,13 @@ import { useAuth } from "../../context/AuthContext";
 import { useAdmin } from "../../hooks/api-hooks";
 import ConfirmBox from "../common/ConfirmBox";
 import { useState } from "react";
+import Button from "../common/Button";
 
 export default function Navigation() {
   const { user, isAdmin, logout } = useAuth();
   const { deleteUser } = useAdmin();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showConfirmLogout, setShowConfirmLogout] = useState(false);
 
   const handleDeleteAccount = async () => {
     try {
@@ -18,10 +20,20 @@ export default function Navigation() {
     }
   };
 
+  const handleLogout = () => {
+    setShowConfirmLogout(true);
+  };
+
   return (
     <nav className="nav">
       <div className="nav-content">
-        <div className="nav-center">The Events Hive</div>
+        <div className="nav-center">
+          <img
+            src="https://i.imgur.com/e6vMBpj.png"
+            alt="The Events Hive"
+            className="nav-logo"
+          />
+        </div>
 
         <div className="nav-row">
           <div className="nav-links">
@@ -47,9 +59,9 @@ export default function Navigation() {
             {user ? (
               <>
                 <span className="user-name">{user.name}</span>
-                <button onClick={logout} className="btn">
+                <Button variant="btn-default" onClick={handleLogout}>
                   Logout
-                </button>
+                </Button>
                 <button
                   onClick={() => setShowConfirmDelete(true)}
                   className="btn-red"
@@ -73,6 +85,16 @@ export default function Navigation() {
         onConfirm={handleDeleteAccount}
         title="Delete Account"
         message="Are you sure you want to delete your account? This action cannot be undone."
+      />
+      <ConfirmBox
+        isOpen={showConfirmLogout}
+        onClose={() => setShowConfirmLogout(false)}
+        onConfirm={() => {
+          logout();
+          setShowConfirmLogout(false);
+        }}
+        title="Confirm Logout"
+        message="Are you sure you want to logout?"
       />
     </nav>
   );

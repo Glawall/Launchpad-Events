@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "NODE_ENV=production vite build",
-    "predeploy": "git add . && git commit -m 'Deploy updates' || true && npm run build && cp CNAME dist/",
-    "deploy": "gh-pages -d dist --message 'Deploy updates'",
+    "predeploy": "rm -rf node_modules/.cache/gh-pages && npm run build && cp CNAME dist/",
+    "deploy": "gh-pages -d dist --message 'Deploy updates' --no-history",
     "preview": "vite preview --host"
   },
   "homepage": "https://theeventhivecouk.co.uk/",

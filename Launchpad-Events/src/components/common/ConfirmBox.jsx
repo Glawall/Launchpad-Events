@@ -16,7 +16,7 @@ export default function ConfirmBox({
           <button onClick={onClose} className="btn-red">
             Cancel
           </button>
-          <button onClick={onConfirm} className="btn-blue">
+          <button onClick={onConfirm} className="btn-default">
             Confirm
           </button>
         </div>

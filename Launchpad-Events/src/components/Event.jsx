@@ -23,6 +23,7 @@ export default function Event() {
   const { status, openStatus, closeStatus } = useConfirmStatus();
   const [attendeeToRemove, setAttendeeToRemove] = useState(null);
   const [error, setError] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const fetchEvent = async () => {
     try {
@@ -40,8 +41,19 @@ export default function Event() {
   }, [id, getEventById]);
 
   const handleEventUpdate = async (updatedEvent) => {
-    setIsEditing(false);
-    await fetchEvent();
+    try {
+      setIsEditing(false);
+      await fetchEvent();
+      setError(null);
+      setShowSuccess(true);
+      window.scrollTo(0, 0);
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+    } catch (err) {
+      setError(err.message);
+      setShowSuccess(false);
+    }
   };
 
   const handleRemoveAttendee = (attendeeId) => {
@@ -71,12 +83,23 @@ export default function Event() {
         event={event}
         onUpdate={handleEventUpdate}
         onCancel={() => setIsEditing(false)}
+        showSuccess={showSuccess}
       />
     );
   }
 
   return (
     <div className="event-page">
+      {error && (
+        <div className="error-box">
+          <p className="error-text">{error}</p>
+        </div>
+      )}
+      {showSuccess && (
+        <div className="success-box">
+          <p className="success-text">Event updated successfully!</p>
+        </div>
+      )}
       <div className="event-details">
         <div className="event-header">
           <h1>{event.title}</h1>
@@ -144,7 +167,7 @@ export default function Event() {
               </>
             ) : (
               <Button
-                variant="blue"
+                variant="btn-default"
                 onClick={handleAttendance}
                 disabled={loading || event.attendees.length >= event.capacity}
               >
@@ -166,7 +189,7 @@ export default function Event() {
                       <span className="remove-text">Remove</span>
                       <button
                         onClick={() => handleRemoveAttendee(attendee.id)}
-                        className="remove-attendee"
+                        className="btn-red"
                         title="Remove attendee"
                       >
                         ×

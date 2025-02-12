@@ -1,12 +1,27 @@
 export default function Button({
   children,
-  variant = "blue", // blue, red, calendar
+  variant = "default",
   disabled = false,
   onClick,
   type = "button",
   className = "",
 }) {
-  const baseClass = variant === "calendar" ? "btn-calendar" : `btn-${variant}`;
+  let baseClass = "btn-default";
+
+  switch (variant) {
+    case "active":
+      baseClass = "btn-active";
+      break;
+    case "red":
+      baseClass = "btn-red";
+      break;
+    case "calendar":
+      baseClass = "btn-calendar";
+      break;
+    case "link":
+      baseClass = "btn-link";
+      break;
+  }
 
   return (
     <button

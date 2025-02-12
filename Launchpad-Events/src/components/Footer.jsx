@@ -10,7 +10,7 @@ export default function Footer() {
         <Link to="/terms-of-service" className="footer-link">
           Terms of Service
         </Link>
-        <span>© 2024 Launchpad Events</span>
+        <span className="footer-text">© 2024 The Event Hive</span>
       </div>
     </footer>
   );

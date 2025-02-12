@@ -1,23 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEvents } from "../hooks/api-hooks";
-import EventCard from "./EventCard";
 import { useAuth } from "../context/AuthContext";
-import EventCalendar from "./EventCalendar";
 import { useEventTypesContext } from "../context/EventTypesContext";
+import EventCard from "./EventCard";
+import EventCalendar from "./EventCalendar";
 import Button from "./common/Button";
 
 export default function EventList() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [eventsList, setEventsList] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [calendarEvents, setCalendarEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({});
   const [pageSize] = useState(10);
+  const [selectedDate, setSelectedDate] = useState(null);
+
   const { getAllEvents } = useEvents();
   const { isAdmin } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [allEvents, setAllEvents] = useState([]);
   const { eventTypes } = useEventTypesContext();
   const navigate = useNavigate();
 
@@ -30,37 +31,12 @@ export default function EventList() {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const typeId = currentType !== "all" ? currentType : undefined;
         const data = await getAllEvents({
           page: currentPage,
           limit: pageSize,
-          sort: currentSort,
-          order: currentOrder,
-          type_id: typeId,
+          type_id: currentType !== "all" ? currentType : undefined,
         });
-
-        const firstPage = await getAllEvents({
-          page: 1,
-          limit: 100,
-          sort: "date",
-          order: "asc",
-        });
-
-        let allEvents = [...firstPage.events];
-        const totalPages = Math.ceil(firstPage.pagination.totalCount / 100);
-
-        for (let page = 2; page <= totalPages; page++) {
-          const nextPage = await getAllEvents({
-            page,
-            limit: 100,
-            sort: "date",
-            order: "asc",
-          });
-          allEvents = [...allEvents, ...nextPage.events];
-        }
-
-        setEventsList(data.events);
-        setAllEvents(allEvents);
+        setEvents(data.events);
         setPagination(data.pagination);
       } catch (err) {
         setError(err.message);
@@ -70,49 +46,88 @@ export default function EventList() {
     };
 
     fetchEvents();
-  }, [
-    currentPage,
-    currentSort,
-    currentOrder,
-    currentType,
-    pageSize,
-    getAllEvents,
-  ]);
+  }, [currentPage, pageSize, currentType]);
+
+  useEffect(() => {
+    const fetchCalendarEvents = async () => {
+      try {
+        const allData = await getAllEvents({ limit: 100, page: 1 });
+        if (allData.pagination.totalPages > 1) {
+          const additionalPromises = Array.from(
+            { length: allData.pagination.totalPages - 1 },
+            (_, i) => getAllEvents({ limit: 100, page: i + 2 })
+          );
+          const additionalData = await Promise.all(additionalPromises);
+          setCalendarEvents([
+            ...allData.events,
+            ...additionalData.flatMap((data) => data.events),
+          ]);
+        } else {
+          setCalendarEvents(allData.events);
+        }
+      } catch (err) {
+        console.error("Failed to fetch calendar events:", err);
+      }
+    };
+
+    fetchCalendarEvents();
+  }, []);
+
+  const displayedEvents = useMemo(() => {
+    return [...events].sort((a, b) => {
+      if (currentSort === "date") {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return currentOrder === "asc" ? dateA - dateB : dateB - dateA;
+      }
+      if (currentSort === "title") {
+        return currentOrder === "asc"
+          ? a.title.localeCompare(b.title)
+          : b.title.localeCompare(a.title);
+      }
+      return 0;
+    });
+  }, [events, currentSort, currentOrder]);
 
   const handleEventUpdate = (updatedEvent) => {
-    setEventsList((currentEvents) =>
-      currentEvents.map((event) =>
-        event.id === updatedEvent.id ? updatedEvent : event
-      )
+    setEvents((prev) =>
+      prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
     );
-    setAllEvents((currentEvents) =>
-      currentEvents.map((event) =>
-        event.id === updatedEvent.id ? updatedEvent : event
-      )
+    setCalendarEvents((prev) =>
+      prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
     );
   };
 
   const handleDateSelect = (date, events) => {
-    if (events && events.length > 0) {
+    if (events?.length > 0) {
       navigate(`/events/${events[0].id}`);
     }
     setSelectedDate(date);
   };
 
-  const handleShowAllEvents = () => {
-    setSelectedDate(null);
-    setEventsList(allEvents);
+  const handleFilterChange = (type) => {
+    setSearchParams((prev) => {
+      type === "all" ? prev.delete("type_id") : prev.set("type_id", type);
+      prev.set("page", "1");
+      return prev;
+    });
   };
 
-  const handleTypeFilter = (typeId) => {
+  const handleSort = (sortField) => {
     setSearchParams((prev) => {
-      if (typeId === "all") {
-        prev.delete("type_id");
+      if (prev.get("sort") === sortField) {
+        prev.set("order", prev.get("order") === "asc" ? "desc" : "asc");
       } else {
-        prev.set("type_id", typeId);
+        prev.set("sort", sortField);
+        prev.set("order", "asc");
       }
       return prev;
     });
+  };
+
+  const handleHideEvent = (eventId) => {
+    setEvents((prev) => prev.filter((event) => event.id !== eventId));
+    setCalendarEvents((prev) => prev.filter((event) => event.id !== eventId));
   };
 
   if (loading) return <div>Loading...</div>;
@@ -123,132 +138,118 @@ export default function EventList() {
       <div className="events-list">
         <div className="filter-controls">
           <Button
-            variant={currentType === "all" ? "blue" : "default"}
-            onClick={() => {
-              handleTypeFilter("all");
-              handleShowAllEvents();
-            }}
+            variant={
+              !currentType || currentType === "all" ? "active" : "default"
+            }
+            onClick={() => handleFilterChange("all")}
+            data-type="all"
           >
             All Events
           </Button>
           {eventTypes.map((type) => (
             <Button
               key={type.id}
-              variant={currentType === type.id.toString() ? "blue" : "default"}
-              onClick={() => handleTypeFilter(type.id.toString())}
+              variant={
+                currentType === type.id.toString() ? "active" : "default"
+              }
+              onClick={() => handleFilterChange(type.id.toString())}
+              data-type={type.id}
             >
               {type.name}
             </Button>
           ))}
         </div>
 
-        {selectedDate
-          ? eventsList
+        {/* Event list rendering */}
+        {selectedDate ? (
+          displayedEvents.filter(
+            (event) =>
+              new Date(event.date).toDateString() ===
+              selectedDate.toDateString()
+          ).length > 0 ? (
+            displayedEvents
               .filter(
                 (event) =>
                   new Date(event.date).toDateString() ===
                   selectedDate.toDateString()
               )
               .map((event) => (
-                <div
-                  key={event.id}
-                  id={`event-${event.id}`}
-                  className="event-wrapper highlighted"
-                >
-                  <EventCard
-                    event={event}
-                    onEventUpdate={handleEventUpdate}
-                    isAdmin={isAdmin}
-                  />
-                </div>
-              ))
-          : eventsList.map((event) => (
-              <div
-                key={event.id}
-                id={`event-${event.id}`}
-                className="event-wrapper"
-              >
                 <EventCard
+                  key={event.id}
                   event={event}
                   onEventUpdate={handleEventUpdate}
+                  onHideEvent={handleHideEvent}
                   isAdmin={isAdmin}
                 />
-              </div>
-            ))}
+              ))
+          ) : (
+            <div className="no-events">No events available for this date</div>
+          )
+        ) : displayedEvents.length > 0 ? (
+          displayedEvents.map((event) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              onEventUpdate={handleEventUpdate}
+              onHideEvent={handleHideEvent}
+              isAdmin={isAdmin}
+            />
+          ))
+        ) : (
+          <div className="no-events">No events of this type available</div>
+        )}
 
-        {!selectedDate && (
+        {pagination && pagination.totalPages > 1 && (
           <div className="pagination">
-            <button
+            <Button
               onClick={() =>
                 setSearchParams({
+                  ...Object.fromEntries(searchParams),
                   page: (currentPage - 1).toString(),
-                  sort: currentSort,
-                  order: currentOrder,
                 })
               }
               disabled={currentPage === 1}
-              className="page-btn"
             >
               Previous
-            </button>
-            <span className="page-info">
+            </Button>
+            <span>
               Page {currentPage} of {pagination.totalPages}
             </span>
-            <button
+            <Button
               onClick={() =>
                 setSearchParams({
+                  ...Object.fromEntries(searchParams),
                   page: (currentPage + 1).toString(),
-                  sort: currentSort,
-                  order: currentOrder,
                 })
               }
-              disabled={!pagination.hasNextPage}
-              className="page-btn"
+              disabled={currentPage >= pagination.totalPages}
             >
               Next
-            </button>
+            </Button>
           </div>
         )}
       </div>
 
       <div className="calendar-section">
         <div className="sort-controls">
-          <button
-            onClick={() =>
-              setSearchParams({
-                page: "1",
-                sort: "date",
-                order:
-                  currentSort === "date" && currentOrder === "asc"
-                    ? "desc"
-                    : "asc",
-              })
-            }
-            className={`sort-btn ${currentSort === "date" ? "active" : ""}`}
+          <Button
+            onClick={() => handleSort("date")}
+            variant={currentSort === "date" ? "active" : "default"}
           >
             Date{" "}
             {currentSort === "date" && (currentOrder === "asc" ? "↑" : "↓")}
-          </button>
-          <button
-            onClick={() =>
-              setSearchParams({
-                page: "1",
-                sort: "title",
-                order:
-                  currentSort === "title" && currentOrder === "asc"
-                    ? "desc"
-                    : "asc",
-              })
-            }
-            className={`sort-btn ${currentSort === "title" ? "active" : ""}`}
+          </Button>
+          <Button
+            onClick={() => handleSort("title")}
+            variant={currentSort === "title" ? "active" : "default"}
           >
             Title{" "}
             {currentSort === "title" && (currentOrder === "asc" ? "↑" : "↓")}
-          </button>
+          </Button>
         </div>
         <div className="calendar-wrapper">
           <EventCalendar
-            events={allEvents}
+            events={calendarEvents}
             onSelectDate={handleDateSelect}
             selectedDate={selectedDate}
           />

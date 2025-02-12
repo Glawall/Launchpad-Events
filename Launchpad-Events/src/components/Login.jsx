@@ -63,24 +63,22 @@ const Login = () => {
         )}
 
         <div className="btn-group">
-          <button type="submit" className="btn-blue" disabled={loading}>
+          <button type="submit" className="btn-default" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </div>
 
         <div className="form-footer">
-          <p>
-            Don't have an account?{" "}
-            <Link to="/signup" className="link">
-              Sign up
-            </Link>
-          </p>
+          <p>Don't have an account? </p>
+          <Link to="/signup" className="btn-default">
+            Sign up
+          </Link>
           <div className="legal-links">
-            <Link to="/privacy-policy" className="link">
+            <Link to="/privacy-policy" className="btn-link">
               Privacy Policy
             </Link>
             <span className="separator">•</span>
-            <Link to="/terms-of-service" className="link">
+            <Link to="/terms-of-service" className="btn-link">
               Terms of Service
             </Link>
           </div>

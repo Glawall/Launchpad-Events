@@ -12,7 +12,7 @@ A modern web application for managing and participating in community events. Bui
 - 🎯 Event Type Categorization and Filtering
 - 📍 Venue Location Management
 - 👤 Attendee Management
-- 📆 Google Calendar Integration
+- 📆 Google Calendar Integration and Oauth Integration
 - 🗓️ Interactive Calendar View
 
 ### Admin Capabilities
@@ -36,7 +36,7 @@ A modern web application for managing and participating in community events. Bui
 
 The application is currently deployed at:
 
-Frontend: https://glawall.github.io/Launchpad-Events/
+Frontend: https://theeventhivecouk.co.uk/
 Backend API: https://launchpad-events-api.onrender.com
 
 Please note: The site might take a minute to initially load as it's hosted on a free service.

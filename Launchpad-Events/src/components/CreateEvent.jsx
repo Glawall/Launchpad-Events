@@ -97,34 +97,30 @@ export default function CreateEvent() {
         <h2 className="form-title">Create Event</h2>
 
         <div className="form-row">
-          <div className="input-group">
-            <label className="label">Title</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              className="input"
-              required
-            />
-          </div>
+          <label className="label">Title</label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
+            className="input"
+            required
+          />
         </div>
 
         <div className="form-row">
-          <div className="input-group">
-            <label className="label">Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              className="input"
-              required
-            />
-          </div>
+          <label className="label">Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            className="input"
+            required
+          />
         </div>
 
         <div className="form-row">
@@ -241,7 +237,7 @@ export default function CreateEvent() {
         </div>
 
         <div className="btn-group">
-          <button type="submit" className="btn-blue" disabled={loading}>
+          <button type="submit" className="btn-default" disabled={loading}>
             {loading ? "Creating..." : "Create Event"}
           </button>
         </div>

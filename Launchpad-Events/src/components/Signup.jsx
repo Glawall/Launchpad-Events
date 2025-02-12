@@ -81,12 +81,10 @@ const Signup = () => {
         </div>
 
         <div className="form-footer">
-          <p>
-            Already have an account?{" "}
-            <Link to="/login" className="link">
-              Login
-            </Link>
-          </p>
+          <p>Already have an account? </p>
+          <Link to="/login" className="btn-default">
+            Login
+          </Link>
         </div>
       </form>
     </div>

@@ -35,7 +35,7 @@ export default function GoogleCalendarButton({ event }) {
     <button
       onClick={handleAddToCalendar}
       disabled={loading}
-      className="btn-calendar"
+      className="btn-default"
     >
       {loading ? "Adding to Calendar..." : "Add to Google Calendar"}
     </button>

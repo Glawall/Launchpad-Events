@@ -23,7 +23,6 @@ export const initGoogleApi = async () => {
 };
 
 export const addEventToCalendar = async (event) => {
-  // Keep the OAuth flow for authentication
   await new Promise((resolve, reject) => {
     try {
       tokenClient.callback = async (resp) => {
@@ -36,7 +35,6 @@ export const addEventToCalendar = async (event) => {
     }
   });
 
-  // Instead of inserting directly, open the calendar UI
   const params = new URLSearchParams({
     action: "TEMPLATE",
     text: event.title,
