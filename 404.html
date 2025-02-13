@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script>
+      (function() {
+        var pathname = window.location.pathname;
+        window.location.replace("/?redirect=" + pathname);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting... If you are not redirected, <a id="redirect-link" href="/">click here</a>.</p>
+    <script>
+      document.getElementById("redirect-link").href = "/?redirect=" + window.location.pathname;
+    </script>
+  </body>
+</html> 
