@@ -75,7 +75,7 @@ const Signup = () => {
         )}
 
         <div className="btn-group">
-          <button type="submit" className="btn-blue" disabled={loading}>
+          <button type="submit" className="btn-default" disabled={loading}>
             {loading ? "Creating account..." : "Create Account"}
           </button>
         </div>
