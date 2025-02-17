@@ -1,6 +1,6 @@
 # Launchpad-Events
 
-A modern web application for managing and participating in community events. Built with React, Node.js, Express, and PostgreSQL. Users can register for events and sync them with their Google Calendar.
+A web application for managing and participating in community events. Built with React, Node.js, Express, PostgreSQL and utilises Google Calendar API and Google OAuth. Admin Users can create, edit and manage events, along with users. Users can register for events and sync them with their Google Calendar.
 
 ## Features
 
